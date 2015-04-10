@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -8,15 +9,18 @@ public class TerrainGen : MonoBehaviour {
 
 
 
-    private readonly List<Worker> Workers = new List<Worker>();
+    private static readonly List<Worker> Workers = new List<Worker>();
     private readonly List<Thread> WorkerThreads = new List<Thread>();
+    private static int WhichWorkerToTake;
     private GameObject ThePlayer;
-    private Vector2I CurrentChunkCoordPos;
-    private Vector2I LastPlayerChunkCoordPos;
-    private List<Vector2I> incommingNewChunkPoses = new List<Vector2I>();
+    private Vector2I CurrentPlayerChunkCoordPos;
+    public static Vector2I LastPlayerChunkCoordPos;
     public static ConcurrentQueue<LocalPacket> IncommingPackets = new ConcurrentQueue<LocalPacket>();
 
     void Start() {
+
+        WhichWorkerToTake = 0;
+        IncommingPackets.Clear();
 
         for (int i = 0; i < Constants.WorkerAmount; i++) {
             Worker workerObject = new Worker();
@@ -34,41 +38,81 @@ public class TerrainGen : MonoBehaviour {
 
     }
 
+    void OnGUI() {
+        GUI.Label(new Rect(50, 50, 200, 50), "Chunks.Count: " + Chunk.Chunks.Count);
+
+    }
 
     void Update() {
 
-        CurrentChunkCoordPos.x = Mathf.FloorToInt(ThePlayer.transform.position.x / Constants.ChunkWidth);
-        CurrentChunkCoordPos.y = Mathf.FloorToInt(ThePlayer.transform.position.z / Constants.ChunkWidth);
-        if (CurrentChunkCoordPos.x != LastPlayerChunkCoordPos.x || CurrentChunkCoordPos.y != LastPlayerChunkCoordPos.y) {
+        CurrentPlayerChunkCoordPos.x = Mathf.FloorToInt(ThePlayer.transform.position.x / Constants.ChunkWidth);
+        CurrentPlayerChunkCoordPos.y = Mathf.FloorToInt(ThePlayer.transform.position.z / Constants.ChunkWidth);
+        if (CurrentPlayerChunkCoordPos.x != LastPlayerChunkCoordPos.x || CurrentPlayerChunkCoordPos.y != LastPlayerChunkCoordPos.y) {
             OnChunkBorderPass();
         }
-        LastPlayerChunkCoordPos = CurrentChunkCoordPos;
-
-
-        Debug.Log(ThePlayer.transform.position + " blabla: " + CurrentChunkCoordPos.x + " " + CurrentChunkCoordPos.y);
+        LastPlayerChunkCoordPos = CurrentPlayerChunkCoordPos;
 
 
 
 
-
+        HandleIncommingPackets();
 
 
     }
 
-    void OnChunkBorderPass() {
+    private void HandleIncommingPackets() {
 
+        if (IncommingPackets.Count > 0) {
+            LocalPacket packet = IncommingPackets.Dequeue();
+
+            switch (packet.Type) {
+                case PacketType.NeedChunkPoses:
+                    Debug.Log("modtog packet i terrainGen: " + packet.ChunksToCreate.Count + " " + packet.ChunksToRemove.Count);
+
+                    foreach (Vector2I vector2I in packet.ChunksToCreate) {
+                        GameObject go = new GameObject();
+                        go.transform.position = new Vector3(vector2I.x, 0, vector2I.y);
+                        Chunk daChunk = go.AddComponent<Chunk>();
+                        daChunk.Pos = vector2I;
+                        Chunk.Chunks.Add(daChunk);
+                    }
+
+
+
+                    break;
+                case PacketType.GenMap:
+
+                    break;
+                case PacketType.GenMesh:
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+
+        }
+
+    }
+
+    void OnChunkBorderPass() {
         LocalPacket packet = new LocalPacket();
         packet.Type = PacketType.NeedChunkPoses;
+        SendPacketToWorker(packet, Speed.Normal);
+    }
 
-
-
-
+    public static void SendPacketToWorker(LocalPacket packet, Speed speed) {
+        Workers[WhichWorkerToTake].QueueueueueWork(packet, speed);
+        if (WhichWorkerToTake >= Constants.WorkerAmount) {
+            WhichWorkerToTake = 0;
+        }
     }
 
     void OnApplicationQuit() {
         Debug.Log("teeeest onappquit");
         foreach (Worker worker in Workers) {
             worker.StopThread();
+            worker.WaitHandle.Set();
         }
         Debug.Log("venter på worker threads bliver færdige");
         foreach (Thread thread in WorkerThreads) {

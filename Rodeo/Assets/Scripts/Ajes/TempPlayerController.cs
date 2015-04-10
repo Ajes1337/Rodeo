@@ -28,7 +28,13 @@ public class TempPlayerController : MonoBehaviour {
 
         }
 
+        if (Input.GetKey(KeyCode.Space)) {
+            transform.Translate(0, 10 * Time.deltaTime, 0);
+        }
+        if (Input.GetKey(KeyCode.LeftShift)) {
+            transform.Translate(0, -10 * Time.deltaTime, 0);
 
+        }
 
 
 
