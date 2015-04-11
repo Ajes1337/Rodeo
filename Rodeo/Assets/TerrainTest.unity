@@ -251,6 +251,15 @@ Prefab:
       propertyPath: m_Range
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 11402592, guid: 364f52898d471ae4c8b4852a7587b7c2, type: 2}
+      propertyPath: MissileFab
+      value: 
+      objectReference: {fileID: 11471564, guid: 12c283d5670536a469ba4adf699e765a,
+        type: 2}
+    - target: {fileID: 5454476, guid: 364f52898d471ae4c8b4852a7587b7c2, type: 2}
+      propertyPath: m_CollisionDetection
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 364f52898d471ae4c8b4852a7587b7c2, type: 2}
   m_IsPrefabParent: 0
