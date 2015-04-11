@@ -10,7 +10,7 @@ public class TerrainGen : MonoBehaviour {
     private static readonly List<Worker> Workers = new List<Worker>();
     private readonly List<Thread> WorkerThreads = new List<Thread>();
     private static int WhichWorkerToTake;
-    private GameObject ThePlayer;
+    public GameObject ThePlayer;
     private Vector2I CurrentPlayerChunkCoordPos;
     public static Vector2I LastPlayerChunkCoordPos;
     public static ConcurrentQueue<LocalPacket> IncommingPackets = new ConcurrentQueue<LocalPacket>();

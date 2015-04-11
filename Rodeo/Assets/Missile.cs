@@ -10,11 +10,16 @@ public class Missile : MonoBehaviour {
     public GameObject SmokeFab;
     private GameObject daSmoke;
     public List<GameObject> ParticleBullets;
+    public List<AudioClip> audioClips;
+    private List<AudioSource> explosionSounds = new List<AudioSource>();
     // Use this for initialization
     void Start() {
         daRigidbody = GetComponent<Rigidbody>();
         daRigidbody.AddForce(transform.forward * 5, ForceMode.VelocityChange);
         daLight = GetComponent<Light>();
+
+        daRigidbody.velocity =
+            TerrainGen.TerrainGenAjesSingletongVildhedRoflKartofel.ThePlayer.GetComponent<Rigidbody>().velocity;
 
         /*daSmoke = Instantiate(SmokeFab, transform.position, Quaternion.LookRotation(transform.forward * -1)) as GameObject;
         daSmoke.transform.parent = this.transform;
@@ -26,7 +31,12 @@ public class Missile : MonoBehaviour {
         go.transform.parent = this.transform;
         //Debug.Log(go.name + " parrticlebullet nr: " + particleBulletToTake);
 
+        foreach (AudioClip audioClip in audioClips) {
+            GameObject go2 = new GameObject();
+            AudioSource AudioSourceeee = go2.AddComponent<AudioSource>();
+            AudioSourceeee.clip = audioClip;
 
+        }
 
     }
 
@@ -39,7 +49,7 @@ public class Missile : MonoBehaviour {
 
     void FixedUpdate() {
 
-        if (daRigidbody.velocity.magnitude < 25) {
+        if (daRigidbody.velocity.magnitude < 35) {
             daRigidbody.AddForce(transform.forward * 10);
         }
 
@@ -56,7 +66,7 @@ public class Missile : MonoBehaviour {
 
         Destroy(this.gameObject);
 
-
+        explosionSounds[Random.Range(0, explosionSounds.Count - 1)].Play();
 
     }
 
