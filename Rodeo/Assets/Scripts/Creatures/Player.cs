@@ -18,6 +18,7 @@ public class Player : MonoBehaviour {
     public Missile MissileFab;
     private bool mouseIsLocked = true;
     private int selectedWeapon = 0;
+    private Light dalight;
 
     void OnGUI() {
 
@@ -38,10 +39,21 @@ public class Player : MonoBehaviour {
 
     private void Start() {
         this._rigidbody = this.GetComponent<Rigidbody>();
+        dalight = GetComponentInChildren<Light>();
+
         Instance = this;
     }
 
     void Update() {
+        if (Input.GetKeyDown(KeyCode.F6)) {
+            if (Math.Abs(dalight.range - 40) < 0.5f) {
+                dalight.range = 400;
+            }
+            else {
+                dalight.range = 40;
+            }
+        }
+
 
         if (Input.GetKeyDown(KeyCode.Escape)) {
             mouseIsLocked = !mouseIsLocked;
