@@ -65,6 +65,15 @@ public class Player : MonoBehaviour
         {
             this._rigidbody.AddTorque(this.transform.right * _rotationYSpeed * -1, ForceMode.Force);
         }
+
+        if (Input.GetKey(KeyCode.Q))
+        {
+            this._rigidbody.AddTorque(this.transform.forward * _rotationYSpeed, ForceMode.Force);
+        }
+        if (Input.GetKey(KeyCode.E))
+        {
+            this._rigidbody.AddTorque(this.transform.forward * _rotationYSpeed * -1, ForceMode.Force);
+        }
         this._rigidbody.angularVelocity *= 1 - Time.fixedDeltaTime * 4;
     }
 }
