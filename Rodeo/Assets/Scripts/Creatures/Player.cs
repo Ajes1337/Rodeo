@@ -34,7 +34,7 @@ public class Player : MonoBehaviour
         TerrainGen.AjesGuiLabel(new Rect(Screen.width - 420, Screen.height - 40, 200, 20), "Health:");
         TerrainGen.AjesGuiLabel(new Rect(0, Screen.height - 160, 200, 20), "Weapons:");
         TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 140, 200, 20), "Hole");
-        TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 120, 200, 20), "LightningRotateBall");
+        TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 120, 200, 22), "LightningRotateBall");
         TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 100, 200, 20), "Portal");
         TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 80, 200, 20), "RuneOfMagic");
         TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 60, 200, 20), "Strom");
@@ -85,11 +85,7 @@ public class Player : MonoBehaviour
             Cursor.visible = true;
         }
 
-        if (Input.GetKeyDown(KeyCode.RightControl))
-        {
-            Instantiate(MissileFab, transform.position + transform.forward * 2, Quaternion.LookRotation(transform.forward));
-        }
-
+     
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             selectedWeapon = 0;
@@ -121,7 +117,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.RightControl) || Input.GetKeyDown(KeyCode.LeftControl))
         {
-            Missile mis = (Missile)Instantiate(MissileFab, transform.position + transform.forward * 2, Quaternion.LookRotation(transform.forward));
+            Missile mis = (Missile)Instantiate(MissileFab, transform.position + transform.forward , Quaternion.LookRotation(transform.forward));
             mis.SetMissileType(selectedWeapon);
         }
 
@@ -175,11 +171,11 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.Q))
         {
-            this._rigidbody.AddTorque(this.transform.forward * _rotationYSpeed * 0.2f, ForceMode.Force);
+            this._rigidbody.AddTorque(this.transform.forward * _rotationYSpeed * 0.4f, ForceMode.Force);
         }
         if (Input.GetKey(KeyCode.E))
         {
-            this._rigidbody.AddTorque(this.transform.forward * _rotationYSpeed * -1 * 0.2f, ForceMode.Force);
+            this._rigidbody.AddTorque(this.transform.forward * _rotationYSpeed * -1 * 0.4f, ForceMode.Force);
         }
         this._rigidbody.angularVelocity *= 1 - Time.fixedDeltaTime * 4;
     }
