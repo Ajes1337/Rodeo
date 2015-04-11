@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshCollider))]
-public class CreatureShape :    MonoBehaviour
+public class CreatureShape : MonoBehaviour
 {
     private DynamicMesh _mesh;
 
@@ -15,13 +15,13 @@ public class CreatureShape :    MonoBehaviour
         this._mesh = new DynamicMesh(this.GetComponent<MeshFilter>().sharedMesh, this.GetComponent<MeshCollider>(), this.GetComponent<MeshFilter>());
     }
 
-    public override void OnInspectorGUI()
-    {
-        if (GUILayout.Button("Generate"))
-        {
-            GenerateBaseSphere();
-        }
-    }
+    //public override void OnInspectorGUI()
+    //{
+    //    if (GUILayout.Button("Generate"))
+    //    {
+    //        GenerateBaseSphere();
+    //    }
+    //}
 
     private void GenerateBaseSphere()
     {

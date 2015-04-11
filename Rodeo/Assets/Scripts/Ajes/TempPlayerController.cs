@@ -1,54 +1,46 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
+using UnityEngine;
 
-public class TempPlayerController : MonoBehaviour {
+public class TempPlayerController : MonoBehaviour
+{
     private float speed = 50;
 
     // Use this for initialization
-    void Start() {
-
+    private void Start()
+    {
     }
 
     // Update is called once per frame
-    void Update() {
-
-
-        if (Input.GetKey(KeyCode.W)) {
-
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.W))
+        {
             transform.Translate(0, 0, speed * Time.deltaTime);
         }
-        if (Input.GetKey(KeyCode.S)) {
+        if (Input.GetKey(KeyCode.S))
+        {
             transform.Translate(0, 0, -speed * Time.deltaTime);
-
         }
-        if (Input.GetKey(KeyCode.A)) {
+        if (Input.GetKey(KeyCode.A))
+        {
             transform.Translate(-speed * Time.deltaTime, 0, 0);
         }
-        if (Input.GetKey(KeyCode.D)) {
+        if (Input.GetKey(KeyCode.D))
+        {
             transform.Translate(speed * Time.deltaTime, 0, 0);
-
         }
 
-        if (Input.GetKey(KeyCode.Space)) {
+        if (Input.GetKey(KeyCode.Space))
+        {
             transform.Translate(0, speed * Time.deltaTime, 0);
         }
-        if (Input.GetKey(KeyCode.LeftShift)) {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
             transform.Translate(0, -speed * Time.deltaTime, 0);
         }
-
-
-
-
     }
 
-
-    void FixedUpdate() {
-
-
-     
-
-
+    private void FixedUpdate()
+    {
     }
-
-
 }

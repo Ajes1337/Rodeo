@@ -5,7 +5,7 @@ using System.Text;
 using UnityEngine;
 
 [RequireComponent(typeof(CreatureShape))]
-public class SphereEditorTool : BaseMonoBehaviour
+public class SphereEditorTool : MonoBehaviour
 {
     [SerializeField]
     private float _brushSize = 0.4f;
