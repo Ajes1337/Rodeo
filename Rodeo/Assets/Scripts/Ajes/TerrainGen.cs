@@ -7,8 +7,6 @@ using PlaynomicsPlugin;
 
 public class TerrainGen : MonoBehaviour {
 
-
-
     private static readonly List<Worker> Workers = new List<Worker>();
     private readonly List<Thread> WorkerThreads = new List<Thread>();
     private static int WhichWorkerToTake;
@@ -16,6 +14,7 @@ public class TerrainGen : MonoBehaviour {
     private Vector2I CurrentPlayerChunkCoordPos;
     public static Vector2I LastPlayerChunkCoordPos;
     public static ConcurrentQueue<LocalPacket> IncommingPackets = new ConcurrentQueue<LocalPacket>();
+    public static bool waitingOnChunkPosesFromWorker = false;
 
     void Start() {
 
@@ -35,6 +34,8 @@ public class TerrainGen : MonoBehaviour {
         ThePlayer = GameObject.FindWithTag("Player");
 
         Application.targetFrameRate = 60;
+
+        OrderNewChunkPoses();
 
     }
 
@@ -67,7 +68,7 @@ public class TerrainGen : MonoBehaviour {
 
             switch (packet.Type) {
                 case PacketType.NeedChunkPoses:
-                    Debug.Log("modtog packet i terrainGen: " + packet.ChunksToCreate.Count + " " + packet.ChunksToRemove.Count);
+
 
                     foreach (Vector2I vector2I in packet.ChunksToCreate) {
                         GameObject go = new GameObject();
@@ -77,7 +78,16 @@ public class TerrainGen : MonoBehaviour {
                         Chunk.Chunks.Add(daChunk);
                     }
 
+                    if (packet.ChunksToCreate.Count > 0) {
+                        OrderNewChunkPoses();
+                    }
 
+                    waitingOnChunkPosesFromWorker = false;
+
+                    for (int i = packet.ChunksToRemove.Count - 1; i >= 0; i--) {
+                        Chunk chunk = packet.ChunksToRemove[i];
+                        chunk.DestroySoon();
+                    }
 
                     break;
                 case PacketType.GenMap:
@@ -96,6 +106,12 @@ public class TerrainGen : MonoBehaviour {
     }
 
     void OnChunkBorderPass() {
+        OrderNewChunkPoses();
+    }
+
+    void OrderNewChunkPoses() {
+        Debug.Log("check for new chunk poses");
+        waitingOnChunkPosesFromWorker = true;
         LocalPacket packet = new LocalPacket();
         packet.Type = PacketType.NeedChunkPoses;
         SendPacketToWorker(packet, Speed.Normal);

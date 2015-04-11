@@ -21,6 +21,8 @@ public class Chunk : MonoBehaviour {
     private bool gotFirstFaceRun;
     private MeshFilter filter;
     private MeshCollider colliiiider;
+    private bool destroySoon = false;
+    private int isBeingUsedInAnotherThread;
 
     public void Start() {
 
@@ -28,6 +30,8 @@ public class Chunk : MonoBehaviour {
         packet.Type = PacketType.GenMap;
         packet.ChunkRef = this;
         TerrainGen.SendPacketToWorker(packet, Speed.Fast);
+        isBeingUsedInAnotherThread++;
+
 
         filter = gameObject.AddComponent<MeshFilter>();
         gameObject.AddComponent<MeshRenderer>();
@@ -45,6 +49,7 @@ public class Chunk : MonoBehaviour {
 
         HandleIncommingPackets();
 
+        HandleSelfDestroying();
 
     }
 
@@ -58,9 +63,19 @@ public class Chunk : MonoBehaviour {
                     Map = packet.Map;
                     UpdateChunkNeighborRelation();
                     CheckIfGotAllNeighborsAndMap();
+                    isBeingUsedInAnotherThread--;
+
                     break;
                 case PacketType.GenMesh:
 
+                    NorthChunk.isBeingUsedInAnotherThread--;
+                    EastChunk.isBeingUsedInAnotherThread--;
+                    SouthChunk.isBeingUsedInAnotherThread--;
+                    WestChunk.isBeingUsedInAnotherThread--;
+                    NeChunk.isBeingUsedInAnotherThread--;
+                    SeChunk.isBeingUsedInAnotherThread--;
+                    SwChunk.isBeingUsedInAnotherThread--;
+                    NwChunk.isBeingUsedInAnotherThread--;
 
                     Mesh aMesh = new Mesh();
                     aMesh.vertices = packet.verts;
@@ -73,6 +88,7 @@ public class Chunk : MonoBehaviour {
                     filter.mesh = aMesh;
                     colliiiider.sharedMesh = aMesh;
 
+                    isBeingUsedInAnotherThread--;
 
 
 
@@ -86,6 +102,16 @@ public class Chunk : MonoBehaviour {
 
 
     void BuildFaces() {
+        isBeingUsedInAnotherThread++;
+        NorthChunk.isBeingUsedInAnotherThread++;
+        EastChunk.isBeingUsedInAnotherThread++;
+        SouthChunk.isBeingUsedInAnotherThread++;
+        WestChunk.isBeingUsedInAnotherThread++;
+        NeChunk.isBeingUsedInAnotherThread++;
+        SeChunk.isBeingUsedInAnotherThread++;
+        SwChunk.isBeingUsedInAnotherThread++;
+        NwChunk.isBeingUsedInAnotherThread++;
+
         LocalPacket packet = new LocalPacket();
         packet.Type = PacketType.GenMesh;
         packet.ChunkRef = this;
@@ -110,7 +136,7 @@ public class Chunk : MonoBehaviour {
             return 1;
         }
         if (y >= Constants.ChunkHeight) {
-            return 0;
+            return 1;
         }
         return Map[x, y, z];
 
@@ -207,18 +233,19 @@ public class Chunk : MonoBehaviour {
     }
 
     public bool CheckIfGotAllNeighborsAndMap() {
-
-        if (NorthChunk != null && SouthChunk != null && EastChunk != null && WestChunk != null &&
-            NeChunk != null && SeChunk != null && SwChunk != null && NwChunk != null &&
-            NorthChunk.Map != null && SouthChunk.Map != null && EastChunk.Map != null && WestChunk.Map != null &&
-            NeChunk.Map != null && SeChunk.Map != null && SwChunk.Map != null && NwChunk.Map != null && Map != null) {
-            if (!gotFirstFaceRun) {
-                BuildFaces();
+        if (!destroySoon) {
+            if (NorthChunk != null && SouthChunk != null && EastChunk != null && WestChunk != null &&
+                NeChunk != null && SeChunk != null && SwChunk != null && NwChunk != null &&
+                NorthChunk.Map != null && SouthChunk.Map != null && EastChunk.Map != null && WestChunk.Map != null &&
+                NeChunk.Map != null && SeChunk.Map != null && SwChunk.Map != null && NwChunk.Map != null && Map != null) {
+                if (!gotFirstFaceRun) {
+                    BuildFaces();
+                }
+                return true;
             }
-            return true;
+            DestroyMeshesIfExists();
+            gotFirstFaceRun = false;
         }
-        DestroyMeshesIfExists();
-        gotFirstFaceRun = false;
         return false;
 
     }
@@ -226,9 +253,68 @@ public class Chunk : MonoBehaviour {
 
     void DestroyMeshesIfExists() {
         if (gotFirstFaceRun == true) {
-            Destroy(GetComponent<MeshFilter>().sharedMesh);
+            Destroy(GetComponent<MeshFilter>().mesh);//toto måske sharedmesh her istedet
             Destroy(GetComponent<MeshCollider>().sharedMesh);
             //ReUsableStuff.GiveUsedMeshArrays(oriVerts, oriColors, oriUvs);
+        }
+    }
+
+    public void DestroyThis() {
+
+
+
+        Chunks.Remove(this);
+
+
+
+        if (NorthChunk != null) {
+            NorthChunk.SouthChunk = null;
+            NorthChunk.CheckIfGotAllNeighborsAndMap();
+        }
+        if (SouthChunk != null) {
+            SouthChunk.NorthChunk = null;
+            SouthChunk.CheckIfGotAllNeighborsAndMap();
+        }
+        if (EastChunk != null) {
+            EastChunk.WestChunk = null;
+            EastChunk.CheckIfGotAllNeighborsAndMap();
+        }
+        if (WestChunk != null) {
+            WestChunk.EastChunk = null;
+            WestChunk.CheckIfGotAllNeighborsAndMap();
+        }
+
+        if (NeChunk != null) {
+            NeChunk.SwChunk = null;
+            NeChunk.CheckIfGotAllNeighborsAndMap();
+        }
+        if (SeChunk != null) {
+            SeChunk.NwChunk = null;
+            SeChunk.CheckIfGotAllNeighborsAndMap();
+        }
+        if (SwChunk != null) {
+            SwChunk.NeChunk = null;
+            SwChunk.CheckIfGotAllNeighborsAndMap();
+        }
+        if (NwChunk != null) {
+            NwChunk.SeChunk = null;
+            NwChunk.CheckIfGotAllNeighborsAndMap();
+        }
+
+        Destroy(this.gameObject);
+
+
+    }
+
+    public void DestroySoon() {
+        destroySoon = true;
+
+
+    }
+
+    private void HandleSelfDestroying() {
+        if (destroySoon == true && isBeingUsedInAnotherThread == 0 && !TerrainGen.waitingOnChunkPosesFromWorker) {
+            DestroyThis();
         }
     }
 

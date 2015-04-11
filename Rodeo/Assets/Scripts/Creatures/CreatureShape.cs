@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshCollider))]
-public class CreatureShape : BaseMonoBehaviour
+public class CreatureShape :    MonoBehaviour
 {
     private Mesh _mesh;
     private float _sphereRadius = 1;

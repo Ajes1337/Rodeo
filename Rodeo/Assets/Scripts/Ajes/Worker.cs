@@ -21,14 +21,14 @@ public class Worker {
         while (Run) {
 
             LocalPacket packet = null;
-            if (IncommingNormalSpeed.Count > 0) {
-                packet = IncommingNormalSpeed.Dequeue();
+            if (IncommingFasterSpeed.Count > 0) {
+                packet = IncommingFasterSpeed.Dequeue();
             }
             else if (IncommingFastSpeed.Count > 0) {
                 packet = IncommingFastSpeed.Dequeue();
             }
-            else if (IncommingFasterSpeed.Count > 0) {
-                packet = IncommingFasterSpeed.Dequeue();
+            else if (IncommingNormalSpeed.Count > 0) {
+                packet = IncommingNormalSpeed.Dequeue();
             }
 
             if (ReferenceEquals(null, packet)) {
@@ -160,14 +160,17 @@ public class Worker {
         byte[, ,] map = new byte[Constants.ChunkWidth, Constants.ChunkHeight, Constants.ChunkWidth];
 
         for (int x = 0; x < Constants.ChunkWidth; x++) {
-            for (int z = 0; z < Constants.ChunkWidth; z++) {
+            for (int y = 0; y < Constants.ChunkHeight ; y++) {
+                for (int z = 0; z < Constants.ChunkWidth; z++) {
 
-                int noiseHeight = (int)((Noise.Generate((x + packet.ChunkRef.Pos.x) / 100f, (z + packet.ChunkRef.Pos.y) / 100f) + 1f) * 10);
+                    if (Noise.Generate((x+packet.ChunkRef.Pos.x) / 50f, y / 50f, (z+packet.ChunkRef.Pos.y) / 50f) > 0) {
+                        map[x, y, z] = 1;
+                    }
 
-                map[x, noiseHeight, z] = 1;
-
-                //    map[x, 1, z] = 1;
-
+                    /*   int noiseHeight = (int)((Noise.Generate((x + packet.ChunkRef.Pos.x) / 100f, (z + packet.ChunkRef.Pos.y) / 100f) + 1f) * 10);
+                   map[x, noiseHeight, z] = 1;*/
+                    //    map[x, 1, z] = 1;
+                }
             }
         }
 
