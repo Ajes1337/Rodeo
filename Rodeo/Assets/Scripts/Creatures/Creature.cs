@@ -30,7 +30,7 @@ public class Creature : MonoBehaviour
 
     private float _speedd = 220f;
     private float _rayDistance = 24;
-    private float _maxStepDistance = 0.2f;
+    private float _maxStepDistance = 0.4f;
     private Rigidbody _rigidbody;
     private Dictionary<Vector3, float> _directionAmounts = new Dictionary<Vector3, float>();
     private Vector3 _waypoint;

@@ -8,7 +8,7 @@ public class CreatureSpawner : MonoBehaviour
     public static CreatureSpawner Instance;
     public Creature _creaturePrefab;
     public List<Creature> _creatures = new List<Creature>();
-    private float _spawnProperbility = 50 / 1025.0f;
+    private float _spawnProperbility = 100 / 1025.0f;
 
     private void Start()
     {
@@ -37,7 +37,8 @@ public class CreatureSpawner : MonoBehaviour
             Vector3 spawnPos = Vector3.zero;
             for (int x = 1; x < Constants.ChunkWidth - 1; x++)
             {
-                for (int y = 1; y < Constants.ChunkHeight - 1; y++)
+                bool fromTop = Random.value > 0.5f;
+                for (int y = fromTop ? Constants.ChunkHeight - 1 : 0; fromTop ? y >= 2 : (y < Constants.ChunkHeight - 1); y += fromTop ? -1 : 1)
                 {
                     for (int z = 1; z < Constants.ChunkWidth - 1; z++)
                     {

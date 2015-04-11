@@ -42,7 +42,7 @@ public static class MeshUtilities
 
         mesh.Vertices = verts.ToArray();
         mesh.Triangles = triangles.ToArray();
-        mesh.Colors = mesh.Vertices.Select(x => Color.gray).ToArray();
+        mesh.Colors = mesh.Vertices.Select(x => Color.green).ToArray();
     }
 
     private static void SubDivide(List<Vector3> verts, List<int> tris)
