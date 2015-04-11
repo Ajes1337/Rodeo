@@ -23,8 +23,8 @@ public class Creature : MonoBehaviour
         new Vector3(1,-1,-1).normalized
     };
 
-    private static Color _lineColor = new Color(167 / 255f, 202 / 255f, 1, 0.63f);
-    private static float _raycastDistance = 20;
+    private static Color _lineColor = new Color(167 / 255f, 252 / 255f, 0.4f, 0.63f);
+    private static float _raycastDistance = 12;
     private static float _raycastLineDistance = 10;
 
     private float _speedd = 220f;
@@ -35,6 +35,7 @@ public class Creature : MonoBehaviour
     private Vector3 _waypoint;
     private Vector3[] _lightningRays;
     private Vector3[] _lightningSpeeds;
+    private Vector3[] _lightningHits;
     private LineRenderer[] _lineRenderes;
 
     [SerializeField]
@@ -47,6 +48,7 @@ public class Creature : MonoBehaviour
         _directionAmounts = Directions.ToDictionary(x => x, x => 1.0f);
         _lightningRays = Enumerable.Range(0, Random.Range(15, 30)).Select(x => new Vector3(Random.Range(-10, 10), Random.Range(-10, 10), Random.Range(-10, 10))).ToArray();
         _lightningSpeeds = Enumerable.Range(0, _lightningRays.Length).Select(x => new Vector3(Random.Range(-1, 1), Random.Range(-1, 1), Random.Range(-1, 1))).ToArray();
+        _lightningHits = new Vector3[_lightningRays.Length];
         _lineRenderes = new LineRenderer[_lightningRays.Length];
 
         DynamicMesh mesh = new DynamicMesh(this.GetComponent<MeshCollider>(), this.GetComponent<MeshFilter>());
@@ -66,7 +68,7 @@ public class Creature : MonoBehaviour
             go.transform.localPosition = Vector3.zero;
             _lineRenderes[i] = go.AddComponent<LineRenderer>();
             _lineRenderes[i].material = _lineMaterial;
-            _lineRenderes[i].SetWidth(0.2f, 0.2f);
+            _lineRenderes[i].SetWidth(0.1f, 0.1f);
             _lineRenderes[i].SetColors(_lineColor, _lineColor);
         }
     }
@@ -126,10 +128,22 @@ public class Creature : MonoBehaviour
             Ray ray = new Ray(this.transform.position, direction);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit, _raycastLineDistance))
+            float d = Vector3.Distance(_lightningHits[i], this.transform.position);
+
+            if (d < _raycastLineDistance || Physics.Raycast(ray, out hit, _raycastLineDistance))
             {
-                float d = Vector3.Distance(this.transform.position, hit.point);
-                RenderLine(direction, _lineRenderes[i], hit.point, d);
+                if (d < _raycastLineDistance)
+                {
+                    d = Vector3.Distance(this.transform.position, _lightningHits[i]);
+                    direction = (_lightningHits[i] - this.transform.position).normalized;
+                    RenderLine(direction, _lineRenderes[i], _lightningHits[i], d);
+                }
+                else
+                {
+                    d = Vector3.Distance(this.transform.position, hit.point);
+                    RenderLine(direction, _lineRenderes[i], hit.point, d);
+                    _lightningHits[i] = hit.point;
+                }
                 _lineColor.a = 1 - d / _raycastLineDistance;
                 _lineRenderes[i].SetColors(_lineColor, _lineColor);
             }
