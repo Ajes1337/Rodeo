@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshCollider))]
-public class CreatureShape : BaseMonoBehaviour
+public class CreatureShape :    MonoBehaviour
 {
     private DynamicMesh _mesh;
 
