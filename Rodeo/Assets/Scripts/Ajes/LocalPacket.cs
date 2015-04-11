@@ -11,4 +11,5 @@ public class LocalPacket {
     public Vector3[] verts;
     public int[] tris;
     public Color32[] colors;
+    public Vector2[] uvs;
 }

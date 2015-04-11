@@ -21,6 +21,7 @@ public class TerrainGen : MonoBehaviour {
     public static Texture2D RedTexture;
     public static Texture2D YellowTexture;
     public static Texture2D GreenTexture;
+    private bool OrderNewChunksWhenThisIsTrue = true;
 
 
     void Start() {
@@ -54,9 +55,10 @@ public class TerrainGen : MonoBehaviour {
 
         ThePlayer = GameObject.FindWithTag("Player");
 
-        Application.targetFrameRate = 60;
+        Application.targetFrameRate = 180;
 
-        OrderNewChunkPoses();
+
+
 
     }
 
@@ -107,6 +109,12 @@ public class TerrainGen : MonoBehaviour {
         LastPlayerChunkCoordPos = CurrentPlayerChunkCoordPos;
 
 
+        if (OrderNewChunksWhenThisIsTrue && Chunk.AChunkAllreadyUsedAGenMeshThisFrame == false) {
+            OrderNewChunksWhenThisIsTrue = false;
+            OrderNewChunkPoses();
+        }
+
+        Chunk.AChunkAllreadyUsedAGenMeshThisFrame = false;
 
 
         HandleIncommingPackets();
@@ -114,6 +122,7 @@ public class TerrainGen : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.F5)) {
             F5IsPressed = !F5IsPressed;
         }
+
     }
 
     private void HandleIncommingPackets() {
@@ -130,11 +139,12 @@ public class TerrainGen : MonoBehaviour {
                         go.transform.position = new Vector3(vector2I.x, 0, vector2I.y);
                         Chunk daChunk = go.AddComponent<Chunk>();
                         daChunk.Pos = vector2I;
+                        go.transform.parent = this.transform;
                         Chunk.Chunks.Add(daChunk);
                     }
                     waitingOnChunkPosesFromWorker = false;
                     if (packet.ChunksToCreate.Count > 0) {
-                        OrderNewChunkPoses();
+                        OrderNewChunksWhenThisIsTrue = true;
                     }
 
 

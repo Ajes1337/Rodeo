@@ -78,6 +78,7 @@ public class Worker {
         List<Vector3> verts = new List<Vector3>();//TODO evt. smid en ca. init størrelse på dem her..
         List<int> tris = new List<int>();
         List<Color32> colors = new List<Color32>();
+        List<Vector2> uvs = new List<Vector2>();
 
         /*  Vector3[] verts = new Vector3[4];
           int[] tris = new int[6];*/
@@ -101,24 +102,24 @@ public class Worker {
                     if (packet.ChunkRef.GetMap(x, y, z) != 0) {
 
                         if (packet.ChunkRef.GetMap(x, y + 1, z) == 0) {
-                            MakeFace(packet.ChunkRef, x, y, z, Direction.Top, ref verts, ref tris, ref colors);
+                            MakeFace(packet.ChunkRef, x, y, z, Direction.Top, ref verts, ref tris, ref colors, ref uvs);
                         }
                         if (packet.ChunkRef.GetMap(x, y - 1, z) == 0) {
-                            MakeFace(packet.ChunkRef, x, y, z, Direction.Bottom, ref verts, ref tris, ref colors);
+                            MakeFace(packet.ChunkRef, x, y, z, Direction.Bottom, ref verts, ref tris, ref colors, ref uvs);
                         }
 
                         if (packet.ChunkRef.GetMap(x + 1, y, z) == 0) {
-                            MakeFace(packet.ChunkRef, x, y, z, Direction.East, ref verts, ref tris, ref colors);
+                            MakeFace(packet.ChunkRef, x, y, z, Direction.East, ref verts, ref tris, ref colors, ref uvs);
                         }
                         if (packet.ChunkRef.GetMap(x - 1, y, z) == 0) {
-                            MakeFace(packet.ChunkRef, x, y, z, Direction.West, ref verts, ref tris, ref colors);
+                            MakeFace(packet.ChunkRef, x, y, z, Direction.West, ref verts, ref tris, ref colors, ref uvs);
                         }
 
                         if (packet.ChunkRef.GetMap(x, y, z + 1) == 0) {
-                            MakeFace(packet.ChunkRef, x, y, z, Direction.North, ref verts, ref tris, ref colors);
+                            MakeFace(packet.ChunkRef, x, y, z, Direction.North, ref verts, ref tris, ref colors, ref uvs);
                         }
                         if (packet.ChunkRef.GetMap(x, y, z - 1) == 0) {
-                            MakeFace(packet.ChunkRef, x, y, z, Direction.South, ref verts, ref tris, ref colors);
+                            MakeFace(packet.ChunkRef, x, y, z, Direction.South, ref verts, ref tris, ref colors, ref uvs);
                         }
 
                     }
@@ -130,13 +131,14 @@ public class Worker {
         packet.verts = verts.ToArray();
         packet.tris = tris.ToArray();
         packet.colors = colors.ToArray();
+        packet.uvs = uvs.ToArray();
 
         packet.ChunkRef.IncommingPackets.Enqueue(packet);
     }
 
 
 
-    private void MakeFace(Chunk chunkRef, int x, int y, int z, Direction dir, ref List<Vector3> verts, ref List<int> tris, ref List<Color32> colors) {
+    private void MakeFace(Chunk chunkRef, int x, int y, int z, Direction dir, ref List<Vector3> verts, ref List<int> tris, ref List<Color32> colors, ref List<Vector2> uvs) {
 
         int vertAmount = verts.Count;
         tris.Add(vertAmount);
@@ -171,6 +173,8 @@ public class Worker {
         }
 
         colors.AddRange(CalculateCornerShadow(chunkRef, x, y, z, dir));
+
+        uvs.AddRange(new Vector2[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) });
 
 
     }
@@ -398,10 +402,13 @@ public class Worker {
             vert4 = true;
         }
 
-        Color32 testLightValueVert1 = new Color32(0, 0, 0, 255);
-        Color32 testLightValueVert2 = new Color32(0, 0, 0, 255);
-        Color32 testLightValueVert3 = new Color32(0, 0, 0, 255);
-        Color32 testLightValueVert4 = new Color32(0, 0, 0, 255);
+
+
+
+        Color32 testLightValueVert1 = new Color32(255, 255, 255, 255);
+        Color32 testLightValueVert2 = new Color32(255, 255, 255, 255);
+        Color32 testLightValueVert3 = new Color32(255, 255, 255, 255);
+        Color32 testLightValueVert4 = new Color32(255, 255, 255, 255);
 
         Color32 shadowValue = new Color32(128, 128, 128, 255);
 
@@ -418,6 +425,9 @@ public class Worker {
             testLightValueVert4 = shadowValue;
         }
 
+
+
+
         return new Color32[] { testLightValueVert1, testLightValueVert2, testLightValueVert3, testLightValueVert4 };
 
 
@@ -431,7 +441,18 @@ public class Worker {
             for (int y = 0; y < Constants.ChunkHeight; y++) {
                 for (int z = 0; z < Constants.ChunkWidth; z++) {
 
-                    if (Noise.Generate((x + packet.ChunkRef.Pos.x) / 50f, y / 50f, (z + packet.ChunkRef.Pos.y) / 50f) > 0) {
+
+                    float lala = y - (Constants.ChunkHeight / 2f);
+
+                    lala = lala / (Constants.ChunkHeight / 2f);
+
+                    if (lala > 0) {
+                        lala = -1 * lala;
+                    }
+                    lala *= 1.5f;
+                    float scale = 50f;
+
+                    if (Noise.Generate((x + packet.ChunkRef.Pos.x) / scale, y / scale, (z + packet.ChunkRef.Pos.y) / scale) > lala) {
                         map[x, y, z] = 1;
                     }
 

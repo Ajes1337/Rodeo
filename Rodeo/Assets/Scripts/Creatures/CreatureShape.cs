@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshCollider))]
