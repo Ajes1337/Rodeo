@@ -16,7 +16,7 @@ public class TempPlayerController : MonoBehaviour {
     private void Update() {
 
         if (Input.GetKeyDown(KeyCode.Mouse0)) {
-            Debug.Log("spawn missile");
+
             Instantiate(MissileFab, transform.position + transform.forward * 2, Quaternion.LookRotation(transform.forward));
         }
 
