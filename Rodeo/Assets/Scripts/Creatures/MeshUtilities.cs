@@ -34,15 +34,15 @@ public static class MeshUtilities
         int seed = _random.Next(0, 10000);
         List<Vector3> verts = new List<Vector3>(_octahedronVerts.Select(x => GetWorldPos(x, 0, seed)));
         List<int> triangles = new List<int>(_octahedronTris);
-        for (int i = 0; i < 4; i++)
-        {
-            SubDivide(verts, triangles);
-            verts = verts.Select(x => GetWorldPos(x, i + 1, seed)).ToList();
-        }
+        //for (int i = 0; i < 2; i++)
+        //{
+        //    SubDivide(verts, triangles);
+        //    verts = verts.Select(x => GetWorldPos(x, i + 1, seed)).ToList();
+        //}
 
         mesh.Vertices = verts.ToArray();
         mesh.Triangles = triangles.ToArray();
-        mesh.Colors = mesh.Vertices.Select(x => Color.red).ToArray();
+        mesh.Colors = mesh.Vertices.Select(x => Color.gray).ToArray();
     }
 
     private static void SubDivide(List<Vector3> verts, List<int> tris)
@@ -149,7 +149,7 @@ public static class MeshUtilities
             var result = v.normalized * (0.5f + (1 + SimplexNoise.Noise.Generate(v.x * factor, seed + v.y * factor, v.z * factor)) / 2) * scale;
             result.y *= (1 + SimplexNoise.Noise.Generate(v.x * factor, seed + v.y * factor, v.z * factor)) / 2;
             result.z *= 1 + ((1 + SimplexNoise.Noise.Generate(v.x * factor, seed + v.y * factor, v.z * factor)) / 2) * 2;
-            return result;
+            return result * 0.3f;
         }
 
         if (ii == 1)

@@ -78,7 +78,10 @@ public class DynamicMesh
 
         _meshFilter.sharedMesh = _mesh;
 
-        _collider.sharedMesh = null;
-        _collider.sharedMesh = _mesh;
+        if (_collider != null)
+        {
+            _collider.sharedMesh = null;
+            _collider.sharedMesh = _mesh;
+        }
     }
 }

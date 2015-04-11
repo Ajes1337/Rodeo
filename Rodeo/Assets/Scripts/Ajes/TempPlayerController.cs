@@ -1,51 +1,44 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class TempPlayerController : MonoBehaviour
-{
+public class TempPlayerController : MonoBehaviour {
     private float speed = 20f;
     private Rigidbody rigidbodyHer;
     public Missile MissileFab;
     private bool mouseIsLocked = true;
 
     // Use this for initialization
-    private void Start()
-    {
+    private void Start() {
         rigidbodyHer = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            Debug.Log("spawn missile");
+    private void Update() {
+
+        if (Input.GetKeyDown(KeyCode.Mouse0)) {
+
             Instantiate(MissileFab, transform.position + transform.forward * 2, Quaternion.LookRotation(transform.forward));
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
+
+        if (Input.GetKeyDown(KeyCode.Escape)) {
             mouseIsLocked = !mouseIsLocked;
         }
 
-        if (mouseIsLocked)
-        {
+        if (mouseIsLocked) {
             Screen.lockCursor = true;
             Cursor.visible = false;
         }
-        else
-        {
+        else {
             Screen.lockCursor = false;
             Cursor.visible = true;
         }
 
         float yaxis = 0;
-        if (Input.GetKey(KeyCode.Space))
-        {
+        if (Input.GetKey(KeyCode.Space)) {
             yaxis += 1f;
         }
-        else if (Input.GetKey(KeyCode.LeftShift))
-        {
+        else if (Input.GetKey(KeyCode.LeftShift)) {
             yaxis += -1f;
         }
 
@@ -54,7 +47,7 @@ public class TempPlayerController : MonoBehaviour
 
         targetVelocity *= speed;
 
-        float maxVelocityChange = 1.0f;
+        float maxVelocityChange = 10.0f;
         Vector3 velocity = GetComponent<Rigidbody>().velocity;
         Vector3 velocityChange = (targetVelocity - velocity);
         velocityChange.x = Mathf.Clamp(velocityChange.x, -maxVelocityChange, maxVelocityChange);
@@ -62,6 +55,7 @@ public class TempPlayerController : MonoBehaviour
         velocityChange.z = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
 
         GetComponent<Rigidbody>().AddForce(velocityChange, ForceMode.VelocityChange);
+
 
         /* if (Input.GetKey(KeyCode.W)) {
              rigidbodyHer.AddForce();
@@ -85,7 +79,6 @@ public class TempPlayerController : MonoBehaviour
          }*/
     }
 
-    private void FixedUpdate()
-    {
+    private void FixedUpdate() {
     }
 }
