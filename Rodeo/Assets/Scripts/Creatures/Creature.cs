@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using GeneticLib;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody), typeof(Light))]
@@ -67,7 +66,7 @@ public class Creature : MonoBehaviour
             go.transform.localPosition = Vector3.zero;
             _lineRenderes[i] = go.AddComponent<LineRenderer>();
             _lineRenderes[i].material = _lineMaterial;
-            _lineRenderes[i].SetWidth(0.02f, 0.02f);
+            _lineRenderes[i].SetWidth(0.2f, 0.2f);
             _lineRenderes[i].SetColors(_lineColor, _lineColor);
         }
     }
