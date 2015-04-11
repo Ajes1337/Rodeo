@@ -89,8 +89,8 @@ Light:
   serializedVersion: 6
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 8
-  m_Range: 10
+  m_Intensity: 1
+  m_Range: 40
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
@@ -132,15 +132,9 @@ MonoBehaviour:
   - {fileID: 100008, guid: 02e78f0542b876e44916aa0d2b1dc25f, type: 2}
   - {fileID: 100000, guid: a20ba1eb73fa1d0469c14c4a3ec7c451, type: 2}
   - {fileID: 100010, guid: 8295f41baf9a80c4b85f0e3871aa6649, type: 2}
-  - {fileID: 100012, guid: b42b8c7a00722034a8d3be5508333337, type: 2}
   - {fileID: 100000, guid: e8143dbc10425004a9eb7ab0334fbd7a, type: 2}
   - {fileID: 100012, guid: abeb22ebb7452714583028bc9a751f01, type: 2}
   - {fileID: 100008, guid: 048523ec3f5d6f54a88ef5babaf569f5, type: 2}
-  audioClips:
-  - {fileID: 8300000, guid: 8f03951fee9bec9478d1ec979ba44677, type: 3}
-  - {fileID: 8300000, guid: 33cd429e81395944088573e40e271f18, type: 3}
-  - {fileID: 8300000, guid: 1792989a5a33779428d2dbe9a9430605, type: 3}
-  - {fileID: 8300000, guid: 395ebd3d6fca1ec40a6b3c7415c1edb7, type: 3}
 --- !u!135 &13528166
 SphereCollider:
   m_ObjectHideFlags: 1
