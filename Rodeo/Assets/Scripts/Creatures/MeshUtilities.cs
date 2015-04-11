@@ -32,6 +32,10 @@ public static class MeshUtilities
     public static void GenerateCreature(DynamicMesh mesh, float radius)
     {
         int seed = _random.Next(0, 10000);
+        if (radius == 2)
+        {
+            seed = 11091;
+        }
         List<Vector3> verts = new List<Vector3>(_octahedronVerts.Select(x => GetWorldPos(x, 0, seed)));
         List<int> triangles = new List<int>(_octahedronTris);
         //for (int i = 0; i < 2; i++)
@@ -40,9 +44,28 @@ public static class MeshUtilities
         //    verts = verts.Select(x => GetWorldPos(x, i + 1, seed)).ToList();
         //}
 
+        //if (radius == 2)
+        //{
+        //    for (int i = 0; i < 1; i++)
+        //    {
+        //        SubDivide(verts, triangles);
+        //        verts = verts.Select(x => GetWorldPos(x, i + 1, seed)).ToList();
+        //    }
+        //    mesh.Vertices = verts.Select(x => x * 0.6f).ToArray();
+        //}
+        //else
+        //{
         mesh.Vertices = verts.ToArray();
+        //}
         mesh.Triangles = triangles.ToArray();
-        mesh.Colors = mesh.Vertices.Select(x => Color.green).ToArray();
+        if (radius == 2)
+        {
+            mesh.Colors = mesh.Vertices.Select(x => Color.white).ToArray();
+        }
+        else
+        {
+            mesh.Colors = mesh.Vertices.Select(x => Color.green).ToArray();
+        }
     }
 
     private static void SubDivide(List<Vector3> verts, List<int> tris)
@@ -142,9 +165,9 @@ public static class MeshUtilities
 
     private static Vector3 GetWorldPos(Vector3 v, int ii, int seed)
     {
+        float factor = 0.2f;
         if (ii == 0)
         {
-            float factor = 0.2f;
             float scale = 2;
             var result = v.normalized * (0.5f + (1 + SimplexNoise.Noise.Generate(v.x * factor, seed + v.y * factor, v.z * factor)) / 2) * scale;
             result.y *= (1 + SimplexNoise.Noise.Generate(v.x * factor, seed + v.y * factor, v.z * factor)) / 2;
@@ -152,34 +175,15 @@ public static class MeshUtilities
             return result * 0.3f;
         }
 
-        if (ii == 1)
-        {
-            float factor = 14f;
-            float scale = 3f;
-            if (ScaledNoise(v.x * factor, v.y * factor, seed + v.z * factor) > 0.9f)
-            {
-                return v * (1 + ScaledNoise(v.x * factor, v.y * factor, seed + v.z * factor) * scale);
-            }
-            else
-            {
-                return v;
-            }
-        }
-
-        return v;
+        factor = 0.4f;
+        var resulat = v + v * (1 + SimplexNoise.Noise.Generate(v.x * factor, seed + v.y * factor, v.z * factor)) / 2;
+        return resulat;
         //if (ii == 1)
         //{
         //    float factor = 0.2f;
         //    float scale = 1.2f;
         //    return v * (1 + (1 + SimplexNoise.Noise.Generate(seed + v.x * factor, v.y * factor, v.z * factor)) / 2) * scale;
         //}
-
-        if (ii == 4)
-        {
-            float factor = 0.1f;
-            float scale = 1.2f;
-            return v * (1 + (1 + SimplexNoise.Noise.Generate(seed + v.x * factor, v.y * factor, v.z * factor)) / 2) * scale;
-        }
 
         //if (ii == 4)
         //{

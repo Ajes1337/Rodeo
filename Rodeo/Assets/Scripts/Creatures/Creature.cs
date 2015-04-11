@@ -37,9 +37,13 @@ public class Creature : MonoBehaviour
     private Vector3[] _lightningSpeeds;
     private Vector3[] _lightningHits;
     private LineRenderer[] _lineRenderes;
+    public float Health = 100;
 
     [SerializeField]
     private Material _lineMaterial;
+
+    private Light _light;
+    private Renderer _renderer;
 
     private void Start()
     {
@@ -57,6 +61,8 @@ public class Creature : MonoBehaviour
 
         SetNewWaypoint(new Vector3(UnityEngine.Random.Range(-1, 1), UnityEngine.Random.Range(-1, 1), UnityEngine.Random.Range(-1, 1)).normalized, true);
         AddLineRenderers();
+        _light = this.gameObject.GetComponent<Light>();
+        _renderer = this.gameObject.GetComponent<Renderer>();
     }
 
     private void AddLineRenderers()
@@ -117,6 +123,20 @@ public class Creature : MonoBehaviour
         _rigidbody.AddForce(Vector3.Lerp(direction, directionToWaypont, sum) * Time.fixedDeltaTime * _speedd);
 
         UpdateLineRenderes();
+
+        UpdateColors();
+
+        if (Health < 0)
+        {
+            GameObject.Destroy(this.gameObject);
+        }
+    }
+
+    private void UpdateColors()
+    {
+        var color = Color.Lerp(Color.green, Color.red, Health / 100f);
+        _light.color = color;
+        _renderer.material.color = color;
     }
 
     private void UpdateLineRenderes()

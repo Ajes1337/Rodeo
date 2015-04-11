@@ -197,15 +197,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 461076, guid: 364f52898d471ae4c8b4852a7587b7c2, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -6.58000803
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 461076, guid: 364f52898d471ae4c8b4852a7587b7c2, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 102.290001
+      value: 120
       objectReference: {fileID: 0}
     - target: {fileID: 461076, guid: 364f52898d471ae4c8b4852a7587b7c2, type: 2}
       propertyPath: m_LocalPosition.z
-      value: -24.6100006
+      value: -105
       objectReference: {fileID: 0}
     - target: {fileID: 461076, guid: 364f52898d471ae4c8b4852a7587b7c2, type: 2}
       propertyPath: m_LocalRotation.x
@@ -259,6 +259,34 @@ Prefab:
     - target: {fileID: 5454476, guid: 364f52898d471ae4c8b4852a7587b7c2, type: 2}
       propertyPath: m_CollisionDetection
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2367690, guid: 364f52898d471ae4c8b4852a7587b7c2, type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 352acd25df8bff74aa653ef77b6696e2, type: 2}
+    - target: {fileID: 480814, guid: 364f52898d471ae4c8b4852a7587b7c2, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 480814, guid: 364f52898d471ae4c8b4852a7587b7c2, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3321904, guid: 364f52898d471ae4c8b4852a7587b7c2, type: 2}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+    - target: {fileID: 461076, guid: 364f52898d471ae4c8b4852a7587b7c2, type: 2}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 461076, guid: 364f52898d471ae4c8b4852a7587b7c2, type: 2}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 492400, guid: 364f52898d471ae4c8b4852a7587b7c2, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -6.13000011
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 364f52898d471ae4c8b4852a7587b7c2, type: 2}
