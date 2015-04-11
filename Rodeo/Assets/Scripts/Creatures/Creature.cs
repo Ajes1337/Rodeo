@@ -111,7 +111,24 @@ public class Creature : MonoBehaviour
             direction += item.Value * item.Key;
         }
         direction *= -1;
-        var randomDir = new Vector3(UnityEngine.Random.Range(-1, 1), UnityEngine.Random.Range(-1, 1), UnityEngine.Random.Range(-1, 1)).normalized;
+        Vector3 randomDir;
+
+        float distanceToPlayer = Vector3.Distance(Player.Instance.transform.position, this.transform.position);
+
+        if (distanceToPlayer < 70)
+        {
+            randomDir = Player.Instance.transform.position;
+        }
+        else
+        {
+            randomDir = new Vector3(UnityEngine.Random.Range(-1, 1), UnityEngine.Random.Range(-1, 1), UnityEngine.Random.Range(-1, 1)).normalized;
+        }
+
+        if (distanceToPlayer < 10)
+        {
+            float dmg = (1 - distanceToPlayer / 10) * Time.deltaTime * 500;
+            Player.Instance.Health -= dmg;
+        }
 
         SetNewWaypoint(Vector3.Lerp(randomDir, direction, sum), sum > 0.6f);
 

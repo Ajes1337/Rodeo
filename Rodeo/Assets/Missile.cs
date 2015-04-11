@@ -84,7 +84,7 @@ public class Missile : MonoBehaviour
 
         //Instantiate(Explosions[Random.Range(0, Explosions.Count)], transform.position, Quaternion.identity);
 
-        float maxDistance = 5;
+        float maxDistance = 15;
         float maxDamage = 120;
         foreach (var item in CreatureSpawner.Instance.Creatures)
         {
@@ -92,7 +92,7 @@ public class Missile : MonoBehaviour
             if (distance < maxDistance)
             {
                 var f = 1 - distance / maxDistance;
-                item.Health -= maxDistance * f;
+                item.Health -= maxDamage * f;
             }
         }
 

@@ -30,6 +30,8 @@ public class Player : MonoBehaviour
     private void OnGUI()
     {
         GUI.HorizontalSlider(new Rect(Screen.width - 420, Screen.height - 20, 400, 20), Health, 0, 1000);
+
+        TerrainGen.AjesGuiLabel(new Rect(Screen.width - 420, Screen.height - 40, 200, 20), "Health:");
         TerrainGen.AjesGuiLabel(new Rect(0, Screen.height - 160, 200, 20), "Weapons:");
         TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 140, 200, 20), "Hole");
         TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 120, 200, 20), "LightningRotateBall");
@@ -38,7 +40,6 @@ public class Player : MonoBehaviour
         TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 60, 200, 20), "Strom");
         TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 40, 200, 20), "SummonMagicCircle2");
         TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 20, 200, 20), "SummonMagicCircle3");
-
         TerrainGen.AjesGuiLabel(new Rect(0, Screen.height - 140 + selectedWeapon * 20, 200, 20), "->");
     }
 
