@@ -171,7 +171,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!65 &6551806
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -206,10 +206,10 @@ Light:
   m_GameObject: {fileID: 142220}
   m_Enabled: 1
   serializedVersion: 6
-  m_Type: 0
+  m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1
-  m_Range: 65
+  m_Intensity: .5
+  m_Range: 40
   m_SpotAngle: 45
   m_CookieSize: 10
   m_Shadows:
@@ -226,7 +226,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_Lightmapping: 4
-  m_BounceIntensity: 1
+  m_BounceIntensity: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_AreaSize: {x: 1, y: 1}
@@ -241,6 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d4edc6b71981d140a9a9f230dac2e98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MissileFab: {fileID: 11471564, guid: 12c283d5670536a469ba4adf699e765a, type: 2}
 --- !u!114 &11441360
 MonoBehaviour:
   m_ObjectHideFlags: 1

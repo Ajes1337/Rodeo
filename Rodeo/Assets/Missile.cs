@@ -51,33 +51,10 @@ public class Missile : MonoBehaviour {
 
     }
 
-    public void SetMissileType(MissileTypes type) {
-        GameObject go = null;
-        switch (type) {
-            case MissileTypes.Hole:
-                go = Instantiate(ParticleBullets[0], transform.position, Quaternion.identity) as GameObject;
-                break;
-            case MissileTypes.LightningRotateBall:
-                go = Instantiate(ParticleBullets[1], transform.position, Quaternion.identity) as GameObject;
-                break;
-            case MissileTypes.Portal:
-                go = Instantiate(ParticleBullets[2], transform.position, Quaternion.identity) as GameObject;
-                break;
-            case MissileTypes.RuneOfMagic:
-                go = Instantiate(ParticleBullets[3], transform.position, Quaternion.identity) as GameObject;
-                break;
-            case MissileTypes.Strom:
-                go = Instantiate(ParticleBullets[4], transform.position, Quaternion.identity) as GameObject;
-                break;
-            case MissileTypes.SummonMagicCircle2:
-                go = Instantiate(ParticleBullets[5], transform.position, Quaternion.identity) as GameObject;
-                break;
-            case MissileTypes.SummonMagicCircle3:
-                go = Instantiate(ParticleBullets[6], transform.position, Quaternion.identity) as GameObject;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException("type", type, null);
-        }
+    public void SetMissileType(int type) {
+
+        GameObject go = Instantiate(ParticleBullets[type], transform.position, Quaternion.identity) as GameObject;
+
 
         go.transform.localScale = new Vector3(0.001f, 0.001f, 0.001f);
         go.transform.parent = this.transform;

@@ -17,8 +17,20 @@ public class Player : MonoBehaviour {
     private float _maxTiltZ = 60;
     public Missile MissileFab;
     private bool mouseIsLocked = true;
+    private int selectedWeapon = 0;
 
     void OnGUI() {
+
+        TerrainGen.AjesGuiLabel(new Rect(0, Screen.height - 160, 200, 20), "Weapons:");
+        TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 140, 200, 20), "Hole");
+        TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 120, 200, 20), "LightningRotateBall");
+        TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 100, 200, 20), "Portal");
+        TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 80, 200, 20), "RuneOfMagic");
+        TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 60, 200, 20), "Strom");
+        TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 40, 200, 20), "SummonMagicCircle2");
+        TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 20, 200, 20), "SummonMagicCircle3");
+
+        TerrainGen.AjesGuiLabel(new Rect(0, Screen.height - 140 + selectedWeapon * 20, 200, 20), "->");
 
 
 
@@ -44,10 +56,31 @@ public class Player : MonoBehaviour {
             Cursor.visible = true;
         }
 
+        if (Input.GetKeyDown(KeyCode.Alpha1)) {
+            selectedWeapon = 0;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2)) {
+            selectedWeapon = 1;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3)) {
+            selectedWeapon = 2;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4)) {
+            selectedWeapon = 3;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha5)) {
+            selectedWeapon = 4;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha6)) {
+            selectedWeapon = 5;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha7)) {
+            selectedWeapon = 6;
+        }
 
-
-        if (Input.GetKeyDown(KeyCode.RightControl)) {
-            Instantiate(MissileFab, transform.position + transform.forward * 2, Quaternion.LookRotation(transform.forward));
+        if (Input.GetKeyDown(KeyCode.RightControl) || Input.GetKeyDown(KeyCode.LeftControl)) {
+            Missile mis = (Missile)Instantiate(MissileFab, transform.position + transform.forward * 2, Quaternion.LookRotation(transform.forward));
+            mis.SetMissileType(selectedWeapon);
         }
     }
 
