@@ -68,7 +68,9 @@ public class Creature : MonoBehaviour
             direction += item.Value * item.Key;
         }
         direction *= -1;
-        SetNewWaypoint(direction, sum > 0.6f);
+        var randomDir = new Vector3(UnityEngine.Random.Range(-1, 1), UnityEngine.Random.Range(-1, 1), UnityEngine.Random.Range(-1, 1)).normalized;
+
+        SetNewWaypoint(Vector3.Lerp(randomDir, direction, sum), sum > 0.6f);
 
         Vector3 directionToWaypont = (_waypoint - this.transform.position).normalized;
 

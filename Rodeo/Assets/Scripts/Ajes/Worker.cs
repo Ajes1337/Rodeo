@@ -77,6 +77,8 @@ public class Worker {
 
         List<Vector3> verts = new List<Vector3>();//TODO evt. smid en ca. init størrelse på dem her..
         List<int> tris = new List<int>();
+        List<Color32> colors = new List<Color32>();
+        List<Vector2> uvs = new List<Vector2>();
 
         /*  Vector3[] verts = new Vector3[4];
           int[] tris = new int[6];*/
@@ -100,24 +102,24 @@ public class Worker {
                     if (packet.ChunkRef.GetMap(x, y, z) != 0) {
 
                         if (packet.ChunkRef.GetMap(x, y + 1, z) == 0) {
-                            MakeFace(x, y, z, Direction.Top, ref verts, ref tris);
+                            MakeFace(packet.ChunkRef, x, y, z, Direction.Top, ref verts, ref tris, ref colors, ref uvs);
                         }
                         if (packet.ChunkRef.GetMap(x, y - 1, z) == 0) {
-                            MakeFace(x, y, z, Direction.Bottom, ref verts, ref tris);
+                            MakeFace(packet.ChunkRef, x, y, z, Direction.Bottom, ref verts, ref tris, ref colors, ref uvs);
                         }
 
                         if (packet.ChunkRef.GetMap(x + 1, y, z) == 0) {
-                            MakeFace(x, y, z, Direction.East, ref verts, ref tris);
+                            MakeFace(packet.ChunkRef, x, y, z, Direction.East, ref verts, ref tris, ref colors, ref uvs);
                         }
                         if (packet.ChunkRef.GetMap(x - 1, y, z) == 0) {
-                            MakeFace(x, y, z, Direction.West, ref verts, ref tris);
+                            MakeFace(packet.ChunkRef, x, y, z, Direction.West, ref verts, ref tris, ref colors, ref uvs);
                         }
 
                         if (packet.ChunkRef.GetMap(x, y, z + 1) == 0) {
-                            MakeFace(x, y, z, Direction.North, ref verts, ref tris);
+                            MakeFace(packet.ChunkRef, x, y, z, Direction.North, ref verts, ref tris, ref colors, ref uvs);
                         }
                         if (packet.ChunkRef.GetMap(x, y, z - 1) == 0) {
-                            MakeFace(x, y, z, Direction.South, ref verts, ref tris);
+                            MakeFace(packet.ChunkRef, x, y, z, Direction.South, ref verts, ref tris, ref colors, ref uvs);
                         }
 
                     }
@@ -128,13 +130,15 @@ public class Worker {
 
         packet.verts = verts.ToArray();
         packet.tris = tris.ToArray();
+        packet.colors = colors.ToArray();
+        packet.uvs = uvs.ToArray();
 
         packet.ChunkRef.IncommingPackets.Enqueue(packet);
     }
 
 
 
-    private void MakeFace(int x, int y, int z, Direction dir, ref List<Vector3> verts, ref List<int> tris) {
+    private void MakeFace(Chunk chunkRef, int x, int y, int z, Direction dir, ref List<Vector3> verts, ref List<int> tris, ref List<Color32> colors, ref List<Vector2> uvs) {
 
         int vertAmount = verts.Count;
         tris.Add(vertAmount);
@@ -167,6 +171,266 @@ public class Worker {
                 break;
 
         }
+
+        colors.AddRange(CalculateCornerShadow(chunkRef, x, y, z, dir));
+
+        uvs.AddRange(new Vector2[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) });
+
+
+    }
+
+    private Color32[] CalculateCornerShadow(Chunk chunkRef, int x, int y, int z, Direction dir) {
+
+        int x2 = 0;
+        int y2 = 0;
+        int z2 = 0;
+
+        switch (dir) {
+            case Direction.Top:
+                y2 = +1;
+                break;
+            case Direction.Bottom:
+                y2 = -1;
+                break;
+            case Direction.North:
+                z2 = +1;
+                break;
+            case Direction.South:
+                z2 = -1;
+                break;
+            case Direction.East:
+                x2 = +1;
+                break;
+            case Direction.West:
+                x2 = -1;
+                break;
+        }
+
+        bool up = false;
+        bool down = false;
+        bool left = false;
+        bool right = false;
+        bool upRight = false;
+        bool downRight = false;
+        bool upLeft = false;
+        bool downLeft = false;
+
+        switch (dir) {
+            case Direction.Top:
+                if (chunkRef.GetMap(x + 1, y + y2, z + 1) != 0) {
+                    upRight = true;
+                }
+                if (chunkRef.GetMap(x + 1, y + y2, z - 1) != 0) {
+                    downRight = true;
+                }
+                if (chunkRef.GetMap(x - 1, y + y2, z + 1) != 0) {
+                    upLeft = true;
+                }
+                if (chunkRef.GetMap(x - 1, y + y2, z - 1) != 0) {
+                    downLeft = true;
+                }
+
+                if (chunkRef.GetMap(x, y + y2, z + 1) != 0) {
+                    up = true;
+                }
+                if (chunkRef.GetMap(x, y + y2, z - 1) != 0) {
+                    down = true;
+                }
+                if (chunkRef.GetMap(x - 1, y + y2, z) != 0) {
+                    left = true;
+                }
+                if (chunkRef.GetMap(x + 1, y + y2, z) != 0) {
+                    right = true;
+                }
+                break;
+            case Direction.Bottom:
+
+                if (chunkRef.GetMap(x + 1, y + y2, z - 1) != 0) {
+                    upRight = true;
+                }
+                if (chunkRef.GetMap(x + 1, y + y2, z + 1) != 0) {
+                    downRight = true;
+                }
+                if (chunkRef.GetMap(x - 1, y + y2, z - 1) != 0) {
+                    upLeft = true;
+                }
+                if (chunkRef.GetMap(x - 1, y + y2, z + 1) != 0) {
+                    downLeft = true;
+                }
+
+                if (chunkRef.GetMap(x, y + y2, z - 1) != 0) {
+                    up = true;
+                }
+                if (chunkRef.GetMap(x, y + y2, z + 1) != 0) {
+                    down = true;
+                }
+                if (chunkRef.GetMap(x - 1, y + y2, z) != 0) {
+                    left = true;
+                }
+                if (chunkRef.GetMap(x + 1, y + y2, z) != 0) {
+                    right = true;
+                }
+                break;
+            case Direction.North:
+                if (chunkRef.GetMap(x - 1, y + 1, z + z2) != 0) {
+                    upRight = true;
+                }
+                if (chunkRef.GetMap(x - 1, y - 1, z + z2) != 0) {
+                    downRight = true;
+                }
+                if (chunkRef.GetMap(x + 1, y + 1, z + z2) != 0) {
+                    upLeft = true;
+                }
+                if (chunkRef.GetMap(x + 1, y - 1, z + z2) != 0) {
+                    downLeft = true;
+                }
+
+                if (chunkRef.GetMap(x, y + 1, z + z2) != 0) {
+                    up = true;
+                }
+                if (chunkRef.GetMap(x, y - 1, z + z2) != 0) {
+                    down = true;
+                }
+                if (chunkRef.GetMap(x + 1, y, z + z2) != 0) {
+                    left = true;
+                }
+                if (chunkRef.GetMap(x - 1, y, z + z2) != 0) {
+                    right = true;
+                }
+                break;
+            case Direction.South:
+
+                if (chunkRef.GetMap(x + 1, y + 1, z + z2) != 0) {
+                    upRight = true;
+                }
+                if (chunkRef.GetMap(x + 1, y - 1, z + z2) != 0) {
+                    downRight = true;
+                }
+                if (chunkRef.GetMap(x - 1, y + 1, z + z2) != 0) {
+                    upLeft = true;
+                }
+                if (chunkRef.GetMap(x - 1, y - 1, z + z2) != 0) {
+                    downLeft = true;
+                }
+
+                if (chunkRef.GetMap(x, y + 1, z + z2) != 0) {
+                    up = true;
+                }
+                if (chunkRef.GetMap(x, y - 1, z + z2) != 0) {
+                    down = true;
+                }
+                if (chunkRef.GetMap(x - 1, y, z + z2) != 0) {
+                    left = true;
+                }
+                if (chunkRef.GetMap(x + 1, y, z + z2) != 0) {
+                    right = true;
+                }
+                break;
+            case Direction.East:
+                if (chunkRef.GetMap(x + x2, y + 1, z + 1) != 0) {
+                    upRight = true;
+                }
+                if (chunkRef.GetMap(x + x2, y - 1, z + 1) != 0) {
+                    downRight = true;
+                }
+                if (chunkRef.GetMap(x + x2, y + 1, z - 1) != 0) {
+                    upLeft = true;
+                }
+                if (chunkRef.GetMap(x + x2, y - 1, z - 1) != 0) {
+                    downLeft = true;
+                }
+
+                if (chunkRef.GetMap(x + x2, y + 1, z) != 0) {
+                    up = true;
+                }
+                if (chunkRef.GetMap(x + x2, y - 1, z) != 0) {
+                    down = true;
+                }
+                if (chunkRef.GetMap(x + x2, y, z - 1) != 0) {
+                    left = true;
+                }
+                if (chunkRef.GetMap(x + x2, y, z + 1) != 0) {
+                    right = true;
+                }
+                break;
+            case Direction.West:
+                if (chunkRef.GetMap(x + x2, y + 1, z - 1) != 0) {
+                    upRight = true;
+                }
+                if (chunkRef.GetMap(x + x2, y - 1, z - 1) != 0) {
+                    downRight = true;
+                }
+                if (chunkRef.GetMap(x + x2, y + 1, z + 1) != 0) {
+                    upLeft = true;
+                }
+                if (chunkRef.GetMap(x + x2, y - 1, z + 1) != 0) {
+                    downLeft = true;
+                }
+
+                if (chunkRef.GetMap(x + x2, y + 1, z) != 0) {
+                    up = true;
+                }
+                if (chunkRef.GetMap(x + x2, y - 1, z) != 0) {
+                    down = true;
+                }
+                if (chunkRef.GetMap(x + x2, y, z + 1) != 0) {
+                    left = true;
+                }
+                if (chunkRef.GetMap(x + x2, y, z - 1) != 0) {
+                    right = true;
+                }
+                break;
+        }
+
+
+
+        bool vert1 = false;
+        bool vert2 = false;
+        bool vert3 = false;
+        bool vert4 = false;
+
+        if (downLeft || down || left) {
+            vert1 = true;
+        }
+        if (upLeft || left || up) {
+            vert2 = true;
+        }
+        if (upRight || up || right) {
+            vert3 = true;
+        }
+        if (downRight || right || down) {
+            vert4 = true;
+        }
+
+
+
+
+        Color32 testLightValueVert1 = new Color32(255, 255, 255, 255);
+        Color32 testLightValueVert2 = new Color32(255, 255, 255, 255);
+        Color32 testLightValueVert3 = new Color32(255, 255, 255, 255);
+        Color32 testLightValueVert4 = new Color32(255, 255, 255, 255);
+
+        Color32 shadowValue = new Color32(128, 128, 128, 255);
+
+        if (vert1) {
+            testLightValueVert1 = shadowValue;
+        }
+        if (vert2) {
+            testLightValueVert2 = shadowValue;
+        }
+        if (vert3) {
+            testLightValueVert3 = shadowValue;
+        }
+        if (vert4) {
+            testLightValueVert4 = shadowValue;
+        }
+
+
+
+
+        return new Color32[] { testLightValueVert1, testLightValueVert2, testLightValueVert3, testLightValueVert4 };
+
+
     }
 
     private void HandleGenMap(LocalPacket packet) {
@@ -177,7 +441,18 @@ public class Worker {
             for (int y = 0; y < Constants.ChunkHeight; y++) {
                 for (int z = 0; z < Constants.ChunkWidth; z++) {
 
-                    if (Noise.Generate((x + packet.ChunkRef.Pos.x) / 50f, y / 50f, (z + packet.ChunkRef.Pos.y) / 50f) > 0) {
+
+                    float lala = y - (Constants.ChunkHeight / 2f);
+
+                    lala = lala / (Constants.ChunkHeight / 2f);
+
+                    if (lala > 0) {
+                        lala = -1 * lala;
+                    }
+                    lala *= 1.5f;
+                    float scale = 50f;
+
+                    if (Noise.Generate((x + packet.ChunkRef.Pos.x) / scale, y / scale, (z + packet.ChunkRef.Pos.y) / scale) > lala) {
                         map[x, y, z] = 1;
                     }
 

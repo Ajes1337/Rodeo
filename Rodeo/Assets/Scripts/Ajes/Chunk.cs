@@ -23,6 +23,7 @@ public class Chunk : MonoBehaviour {
     private MeshCollider colliiiider;
     private bool destroySoon = false;
     private int isBeingUsedInAnotherThread;
+    public static bool AChunkAllreadyUsedAGenMeshThisFrame = false;
 
     public void Start() {
 
@@ -69,11 +70,18 @@ public class Chunk : MonoBehaviour {
                     break;
                 case PacketType.GenMesh:
 
-                   
+                    if (AChunkAllreadyUsedAGenMeshThisFrame) {
+                        IncommingPackets.Enqueue(packet);
+                        break;
+                    }
+
+                    AChunkAllreadyUsedAGenMeshThisFrame = true;
 
                     Mesh aMesh = new Mesh();
                     aMesh.vertices = packet.verts;
                     aMesh.triangles = packet.tris;
+                    aMesh.colors32 = packet.colors;
+                    aMesh.uv = packet.uvs;
 
                     aMesh.RecalculateBounds();
                     aMesh.RecalculateNormals();
@@ -84,7 +92,7 @@ public class Chunk : MonoBehaviour {
 
                     isBeingUsedInAnotherThread--;
 
-                     NorthChunk.isBeingUsedInAnotherThread--;
+                    NorthChunk.isBeingUsedInAnotherThread--;
                     EastChunk.isBeingUsedInAnotherThread--;
                     SouthChunk.isBeingUsedInAnotherThread--;
                     WestChunk.isBeingUsedInAnotherThread--;
@@ -120,6 +128,19 @@ public class Chunk : MonoBehaviour {
     }
 
     public byte GetMap(int x, int y, int z) {
+
+        if (x >= Constants.ChunkWidth && z >= Constants.ChunkWidth) {
+            return NeChunk.GetMap(x - Constants.ChunkWidth, y, z - Constants.ChunkWidth);
+        }
+        if (x >= Constants.ChunkWidth && z < 0) {
+            return SeChunk.GetMap(x - Constants.ChunkWidth, y, z + Constants.ChunkWidth);
+        }
+        if (z < 0 && x < 0) {
+            return SwChunk.GetMap(x + Constants.ChunkWidth, y, z + Constants.ChunkWidth);
+        }
+        if (z >= Constants.ChunkWidth && x < 0) {
+            return NwChunk.GetMap(x + Constants.ChunkWidth, y, z - Constants.ChunkWidth);
+        }
 
         if (x < 0) {
             return WestChunk.GetMap(x + Constants.ChunkWidth, y, z);
