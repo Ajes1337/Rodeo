@@ -90,7 +90,7 @@ Light:
   m_Type: 2
   m_Color: {r: .574036539, g: 1, b: .227941155, a: 1}
   m_Intensity: 8
-  m_Range: 16
+  m_Range: 30
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
@@ -123,6 +123,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _lineMaterial: {fileID: 2100000, guid: 137a6d57c88a7a0468c2ebd2c3e921e7, type: 2}
+  Explosions:
+  - {fileID: 100000, guid: 285c3b6e7a8958143ad137971689a216, type: 2}
+  - {fileID: 100000, guid: fe82fe3a2cdcf5c42a13ffbcfb4fddd6, type: 2}
+  - {fileID: 100000, guid: 9aa8903ff1c932c4f91f7928a7a82b85, type: 2}
 --- !u!136 &13605464
 CapsuleCollider:
   m_ObjectHideFlags: 1

@@ -45,12 +45,14 @@ public class Creature : MonoBehaviour
     private Light _light;
     private Renderer _renderer;
 
+    public List<GameObject> Explosions;
+
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
         _rigidbody.useGravity = false;
         _directionAmounts = Directions.ToDictionary(x => x, x => 1.0f);
-        _lightningRays = Enumerable.Range(0, Random.Range(15, 30)).Select(x => new Vector3(Random.Range(-10, 10), Random.Range(-10, 10), Random.Range(-10, 10))).ToArray();
+        _lightningRays = Enumerable.Range(0, 5/*Random.Range(15, 30)*/).Select(x => new Vector3(Random.Range(-10, 10), Random.Range(-10, 10), Random.Range(-10, 10))).ToArray();
         _lightningSpeeds = Enumerable.Range(0, _lightningRays.Length).Select(x => new Vector3(Random.Range(-1, 1), Random.Range(-1, 1), Random.Range(-1, 1))).ToArray();
         _lightningHits = new Vector3[_lightningRays.Length];
         _lineRenderes = new LineRenderer[_lightningRays.Length];
@@ -134,7 +136,7 @@ public class Creature : MonoBehaviour
 
     private void UpdateColors()
     {
-        var color = Color.Lerp(Color.green, Color.red, Health / 100f);
+        var color = Color.Lerp(Color.green, Color.red, 1 - Health / 100f);
         _light.color = color;
         _renderer.material.color = color;
     }
@@ -143,10 +145,9 @@ public class Creature : MonoBehaviour
     {
         for (int i = 0; i < _lightningRays.Length; i++)
         {
-            _lightningRays[i] += _lightningSpeeds[i] * 0.01f;
-            Vector3 direction = new Vector3(Mathf.Cos(_lightningRays[i].x), Mathf.Sin(_lightningRays[i].y), Mathf.Tan(_lightningRays[i].z)).normalized;
+            Vector3 direction = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f));
             Ray ray = new Ray(this.transform.position, direction);
-            RaycastHit hit;
+            RaycastHit hit = default(RaycastHit);
 
             float d = Vector3.Distance(_lightningHits[i], this.transform.position);
 
@@ -191,8 +192,9 @@ public class Creature : MonoBehaviour
             }
             else
             {
-                Vector3 noise = new Vector3(SimplexNoise.Noise.Generate(Time.time + i * 1), SimplexNoise.Noise.Generate(Time.time * 1 + i * 3), SimplexNoise.Noise.Generate(Time.time * 1 + i * 3));
-                lineRenderer.SetPosition(i, currentPosition + noise * 0.1f);
+                /*   Vector3 noise = new Vector3(SimplexNoise.Noise.Generate(Time.time + i * 1), SimplexNoise.Noise.Generate(Time.time * 1 + i * 3), SimplexNoise.Noise.Generate(Time.time * 1 + i * 3));*/
+                Vector3 noise = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+                lineRenderer.SetPosition(i, currentPosition + noise * 0.25f);
             }
             i++;
             currentDistance += _maxStepDistance;
@@ -212,5 +214,16 @@ public class Creature : MonoBehaviour
             currentDistance += _maxStepDistance;
         }
         return i + 1;
+    }
+
+    private void MakeExplosion()
+    {
+        int explosionNr = Random.Range(0, Explosions.Count - 1);
+        GameObject go = Instantiate(Explosions[explosionNr], transform.position, Quaternion.identity) as GameObject;
+        go.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+    }
+
+    private void OnDestroy()
+    {
     }
 }

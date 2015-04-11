@@ -7,7 +7,7 @@ public class CreatureSpawner : MonoBehaviour
 {
     public static CreatureSpawner Instance;
     public Creature _creaturePrefab;
-    public List<Creature> _creatures = new List<Creature>();
+    public List<Creature> Creatures = new List<Creature>();
     private float _spawnProperbility = 100 / 1025.0f;
 
     private void Start()
@@ -19,12 +19,12 @@ public class CreatureSpawner : MonoBehaviour
 
     private void OnChunkBorderPassd()
     {
-        foreach (var item in _creatures.ToList())
+        foreach (var item in Creatures.ToList())
         {
             if (Vector3.Distance(item.transform.position, this.transform.position) > Constants.ViewRadiusChunk * Constants.ChunkWidth)
             {
                 GameObject.Destroy(item.gameObject);
-                _creatures.Remove(item);
+                Creatures.Remove(item);
             }
         }
     }
@@ -59,7 +59,7 @@ public class CreatureSpawner : MonoBehaviour
             if (creatureFound)
             {
                 GameObject go = (GameObject)(GameObject.Instantiate(_creaturePrefab.gameObject, spawnPos, Quaternion.identity));
-                _creatures.Add(go.GetComponent<Creature>());
+                Creatures.Add(go.GetComponent<Creature>());
             }
         }
     }

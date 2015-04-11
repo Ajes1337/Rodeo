@@ -249,7 +249,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 10836654, guid: 364f52898d471ae4c8b4852a7587b7c2, type: 2}
       propertyPath: m_Range
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 11402592, guid: 364f52898d471ae4c8b4852a7587b7c2, type: 2}
       propertyPath: MissileFab
