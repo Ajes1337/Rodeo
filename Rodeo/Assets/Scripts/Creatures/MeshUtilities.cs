@@ -27,14 +27,17 @@ public static class MeshUtilities
             5, 1, 4
         };
 
+    public static System.Random _random = new System.Random();
+
     public static void GenerateCreature(DynamicMesh mesh, float radius)
     {
-        List<Vector3> verts = new List<Vector3>(_octahedronVerts);
+        int seed = _random.Next(0, 10000);
+        List<Vector3> verts = new List<Vector3>(_octahedronVerts.Select(x => GetWorldPos(x, 0, seed)));
         List<int> triangles = new List<int>(_octahedronTris);
-
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 4; i++)
         {
             SubDivide(verts, triangles);
+            verts = verts.Select(x => GetWorldPos(x, i + 1, seed)).ToList();
         }
 
         mesh.Vertices = verts.ToArray();
@@ -61,13 +64,9 @@ public static class MeshUtilities
 
             if (Vector3.Cross(v0 - v1, v0 - v2).magnitude > 0.1f)
             {
-                Vector3 av0 = ((v0 + v1) / 2);
-                Vector3 av1 = ((v1 + v2) / 2);
-                Vector3 av2 = ((v2 + v0) / 2);
-
-                av0.Normalize();
-                av1.Normalize();
-                av2.Normalize();
+                Vector3 av0 = (v0 + v1) / 2;
+                Vector3 av1 = (v1 + v2) / 2;
+                Vector3 av2 = (v2 + v0) / 2;
 
                 trisToRemove.Add(i + 0);
                 trisToRemove.Add(i + 1);
@@ -134,6 +133,66 @@ public static class MeshUtilities
                 tris.Add(vertCount + b0);
             }
         }
+    }
+
+    private static float ScaledNoise(float x, float y, float z)
+    {
+        return (1 + SimplexNoise.Noise.Generate(x, y, z)) / 2;
+    }
+
+    private static Vector3 GetWorldPos(Vector3 v, int ii, int seed)
+    {
+        if (ii == 0)
+        {
+            float factor = 0.2f;
+            float scale = 2;
+            var result = v.normalized * (0.5f + (1 + SimplexNoise.Noise.Generate(v.x * factor, seed + v.y * factor, v.z * factor)) / 2) * scale;
+            result.y *= (1 + SimplexNoise.Noise.Generate(v.x * factor, seed + v.y * factor, v.z * factor)) / 2;
+            result.z *= 1 + ((1 + SimplexNoise.Noise.Generate(v.x * factor, seed + v.y * factor, v.z * factor)) / 2) * 2;
+            return result;
+        }
+
+        if (ii == 1)
+        {
+            float factor = 14f;
+            float scale = 3f;
+            if (ScaledNoise(v.x * factor, v.y * factor, seed + v.z * factor) > 0.9f)
+            {
+                return v * (1 + ScaledNoise(v.x * factor, v.y * factor, seed + v.z * factor) * scale);
+            }
+            else
+            {
+                return v;
+            }
+        }
+
+        return v;
+        //if (ii == 1)
+        //{
+        //    float factor = 0.2f;
+        //    float scale = 1.2f;
+        //    return v * (1 + (1 + SimplexNoise.Noise.Generate(seed + v.x * factor, v.y * factor, v.z * factor)) / 2) * scale;
+        //}
+
+        if (ii == 4)
+        {
+            float factor = 0.1f;
+            float scale = 1.2f;
+            return v * (1 + (1 + SimplexNoise.Noise.Generate(seed + v.x * factor, v.y * factor, v.z * factor)) / 2) * scale;
+        }
+
+        //if (ii == 4)
+        //{
+        //    float factor = 0.2f;
+        //    float scale = 1.2f;
+        //    return v * (1 + (1 + SimplexNoise.Noise.Generate(seed + v.x * factor, v.y * factor, v.z * factor)) / 2) * scale;
+        //}
+
+        //if (ii == 3)
+        //{
+        //    float factor = 0.2f;
+        //    return v * (1 + SimplexNoise.Noise.Generate(v.x * factor, v.y * factor, v.z * factor));
+        //}
     }
 
     private static void AutoSubdivide(DynamicMesh dynamicMesh)
