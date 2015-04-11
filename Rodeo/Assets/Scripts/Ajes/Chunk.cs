@@ -69,11 +69,12 @@ public class Chunk : MonoBehaviour {
                     break;
                 case PacketType.GenMesh:
 
-                   
+
 
                     Mesh aMesh = new Mesh();
                     aMesh.vertices = packet.verts;
                     aMesh.triangles = packet.tris;
+                    aMesh.colors32 = packet.colors;
 
                     aMesh.RecalculateBounds();
                     aMesh.RecalculateNormals();
@@ -84,7 +85,7 @@ public class Chunk : MonoBehaviour {
 
                     isBeingUsedInAnotherThread--;
 
-                     NorthChunk.isBeingUsedInAnotherThread--;
+                    NorthChunk.isBeingUsedInAnotherThread--;
                     EastChunk.isBeingUsedInAnotherThread--;
                     SouthChunk.isBeingUsedInAnotherThread--;
                     WestChunk.isBeingUsedInAnotherThread--;
