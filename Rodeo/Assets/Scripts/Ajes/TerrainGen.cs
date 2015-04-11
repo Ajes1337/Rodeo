@@ -15,8 +15,29 @@ public class TerrainGen : MonoBehaviour {
     public static Vector2I LastPlayerChunkCoordPos;
     public static ConcurrentQueue<LocalPacket> IncommingPackets = new ConcurrentQueue<LocalPacket>();
     public static bool waitingOnChunkPosesFromWorker = false;
+    public Material ChunkMaterial;
+    public static TerrainGen TerrainGenAjesSingletongVildhedRoflKartofel;
+    private bool F5IsPressed = false;
+    public static Texture2D RedTexture;
+    public static Texture2D YellowTexture;
+    public static Texture2D GreenTexture;
+
 
     void Start() {
+
+        Constants.WorkerAmount = Environment.ProcessorCount - 2;
+
+        RedTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+        RedTexture.SetPixel(0, 0, Color.red);
+        RedTexture.Apply();
+        YellowTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+        YellowTexture.SetPixel(0, 0, Color.yellow);
+        YellowTexture.Apply();
+        GreenTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+        GreenTexture.SetPixel(0, 0, new Color(0f, 1f, 0f, 0.5f));
+        GreenTexture.Apply();
+
+        TerrainGenAjesSingletongVildhedRoflKartofel = this;
 
         WhichWorkerToTake = 0;
         IncommingPackets.Clear();
@@ -40,7 +61,39 @@ public class TerrainGen : MonoBehaviour {
     }
 
     void OnGUI() {
-        GUI.Label(new Rect(50, 50, 200, 50), "Chunks.Count: " + Chunk.Chunks.Count);
+
+        if (F5IsPressed) {
+            try {
+                int xStart = Screen.width / 2;
+                int yStart = Screen.height / 2;
+                for (int i = Chunk.Chunks.Count - 1; i >= 0; i--) {
+                    Chunk chunk = Chunk.Chunks[i];
+                    if (chunk.gotFirstFaceRun) {
+                        GUI.DrawTexture(new Rect(xStart - ThePlayer.transform.position.x + chunk.Pos.x, yStart + ThePlayer.transform.position.z - chunk.Pos.y, Constants.ChunkWidth, Constants.ChunkWidth), GreenTexture);
+                    }
+                    else if (chunk.Map != null) {
+                        GUI.DrawTexture(new Rect(xStart - ThePlayer.transform.position.x + chunk.Pos.x, yStart + ThePlayer.transform.position.z - chunk.Pos.y, Constants.ChunkWidth, Constants.ChunkWidth), YellowTexture);
+                    }
+                    else {
+                        GUI.DrawTexture(new Rect(xStart - ThePlayer.transform.position.x + chunk.Pos.x, yStart + ThePlayer.transform.position.z - chunk.Pos.y, Constants.ChunkWidth, Constants.ChunkWidth), RedTexture);
+                    }
+                }
+            }
+            catch (Exception e) {
+                Debug.Log("f5 problem.. : " + e);
+            }
+        }
+
+
+        AjesGuiLabel(new Rect(0, 0, 200, 20), "Memory: " + GC.GetTotalMemory(false) / 1024000 + " MB");
+        AjesGuiLabel(new Rect(0, 20, 200, 20), "Chunks.Count: " + Chunk.Chunks.Count);
+
+        GUI.skin.label.alignment = TextAnchor.UpperRight;
+        for (int i = 0; i < Workers.Count; i++) {
+            Worker worker = Workers[i];
+            AjesGuiLabel(new Rect(Screen.width - 250, 20 * i, 250, 20), worker.DoingAtm.ToString() + " <- worker" + i);
+        }
+        GUI.skin.label.alignment = TextAnchor.UpperLeft;
 
     }
 
@@ -58,7 +111,9 @@ public class TerrainGen : MonoBehaviour {
 
         HandleIncommingPackets();
 
-
+        if (Input.GetKeyDown(KeyCode.F5)) {
+            F5IsPressed = !F5IsPressed;
+        }
     }
 
     private void HandleIncommingPackets() {
@@ -77,12 +132,11 @@ public class TerrainGen : MonoBehaviour {
                         daChunk.Pos = vector2I;
                         Chunk.Chunks.Add(daChunk);
                     }
-
+                    waitingOnChunkPosesFromWorker = false;
                     if (packet.ChunksToCreate.Count > 0) {
                         OrderNewChunkPoses();
                     }
 
-                    waitingOnChunkPosesFromWorker = false;
 
                     for (int i = packet.ChunksToRemove.Count - 1; i >= 0; i--) {
                         Chunk chunk = packet.ChunksToRemove[i];
@@ -110,15 +164,17 @@ public class TerrainGen : MonoBehaviour {
     }
 
     void OrderNewChunkPoses() {
-        Debug.Log("check for new chunk poses");
-        waitingOnChunkPosesFromWorker = true;
-        LocalPacket packet = new LocalPacket();
-        packet.Type = PacketType.NeedChunkPoses;
-        SendPacketToWorker(packet, Speed.Normal);
+        if (!waitingOnChunkPosesFromWorker) {
+            waitingOnChunkPosesFromWorker = true;
+            LocalPacket packet = new LocalPacket();
+            packet.Type = PacketType.NeedChunkPoses;
+            SendPacketToWorker(packet, Speed.Normal);
+        }
     }
 
     public static void SendPacketToWorker(LocalPacket packet, Speed speed) {
         Workers[WhichWorkerToTake].QueueueueueWork(packet, speed);
+        WhichWorkerToTake++;
         if (WhichWorkerToTake >= Constants.WorkerAmount) {
             WhichWorkerToTake = 0;
         }
@@ -135,6 +191,13 @@ public class TerrainGen : MonoBehaviour {
             thread.Join();
         }
         Debug.Log("nu er alle worker threads færdige");
+    }
+
+    public static void AjesGuiLabel(Rect rect, string s) {
+        GUI.color = Color.black;
+        GUI.Label(new Rect(rect.x + 1, rect.y + 1, rect.width, rect.height), s);
+        GUI.color = Color.white;
+        GUI.Label(rect, s);
     }
 
 }

@@ -18,7 +18,7 @@ public class Chunk : MonoBehaviour {
     private Chunk SeChunk;
     private Chunk SwChunk;
     private Chunk NwChunk;
-    private bool gotFirstFaceRun;
+    public bool gotFirstFaceRun;
     private MeshFilter filter;
     private MeshCollider colliiiider;
     private bool destroySoon = false;
@@ -36,6 +36,7 @@ public class Chunk : MonoBehaviour {
         filter = gameObject.AddComponent<MeshFilter>();
         gameObject.AddComponent<MeshRenderer>();
         colliiiider = gameObject.AddComponent<MeshCollider>();
+        GetComponent<Renderer>().material = TerrainGen.TerrainGenAjesSingletongVildhedRoflKartofel.ChunkMaterial;
 
 
 
@@ -68,14 +69,7 @@ public class Chunk : MonoBehaviour {
                     break;
                 case PacketType.GenMesh:
 
-                    NorthChunk.isBeingUsedInAnotherThread--;
-                    EastChunk.isBeingUsedInAnotherThread--;
-                    SouthChunk.isBeingUsedInAnotherThread--;
-                    WestChunk.isBeingUsedInAnotherThread--;
-                    NeChunk.isBeingUsedInAnotherThread--;
-                    SeChunk.isBeingUsedInAnotherThread--;
-                    SwChunk.isBeingUsedInAnotherThread--;
-                    NwChunk.isBeingUsedInAnotherThread--;
+                   
 
                     Mesh aMesh = new Mesh();
                     aMesh.vertices = packet.verts;
@@ -90,7 +84,14 @@ public class Chunk : MonoBehaviour {
 
                     isBeingUsedInAnotherThread--;
 
-
+                     NorthChunk.isBeingUsedInAnotherThread--;
+                    EastChunk.isBeingUsedInAnotherThread--;
+                    SouthChunk.isBeingUsedInAnotherThread--;
+                    WestChunk.isBeingUsedInAnotherThread--;
+                    NeChunk.isBeingUsedInAnotherThread--;
+                    SeChunk.isBeingUsedInAnotherThread--;
+                    SwChunk.isBeingUsedInAnotherThread--;
+                    NwChunk.isBeingUsedInAnotherThread--;
 
                     gotFirstFaceRun = true;
 
@@ -253,7 +254,7 @@ public class Chunk : MonoBehaviour {
 
     void DestroyMeshesIfExists() {
         if (gotFirstFaceRun == true) {
-            Destroy(GetComponent<MeshFilter>().mesh);//toto måske sharedmesh her istedet
+            Destroy(GetComponent<MeshFilter>().sharedMesh);//toto måske sharedmesh her istedet
             Destroy(GetComponent<MeshCollider>().sharedMesh);
             //ReUsableStuff.GiveUsedMeshArrays(oriVerts, oriColors, oriUvs);
         }

@@ -3,6 +3,7 @@ using System.Collections;
 
 public class TempPlayerController : MonoBehaviour {
     private float speed = 50;
+
     // Use this for initialization
     void Start() {
 
@@ -12,8 +13,8 @@ public class TempPlayerController : MonoBehaviour {
     void Update() {
 
 
-
         if (Input.GetKey(KeyCode.W)) {
+
             transform.Translate(0, 0, speed * Time.deltaTime);
         }
         if (Input.GetKey(KeyCode.S)) {
@@ -37,5 +38,17 @@ public class TempPlayerController : MonoBehaviour {
 
 
 
+
     }
+
+
+    void FixedUpdate() {
+
+
+     
+
+
+    }
+
+
 }

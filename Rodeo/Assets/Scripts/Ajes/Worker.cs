@@ -9,51 +9,65 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 public class Worker {
+    public enum WorkingType {
+        FindNewChunkPoses,
+        GenMap,
+        GenMesh,
+        Idle
+    }
 
     private bool Run = true;
     private ConcurrentQueue<LocalPacket> IncommingNormalSpeed = new ConcurrentQueue<LocalPacket>();
     private ConcurrentQueue<LocalPacket> IncommingFastSpeed = new ConcurrentQueue<LocalPacket>();
     private ConcurrentQueue<LocalPacket> IncommingFasterSpeed = new ConcurrentQueue<LocalPacket>();
     public readonly AutoResetEvent WaitHandle = new AutoResetEvent(false);
+    public WorkingType DoingAtm = WorkingType.Idle;
 
     public void Go() {
 
         while (Run) {
-
-            LocalPacket packet = null;
-            if (IncommingFasterSpeed.Count > 0) {
-                packet = IncommingFasterSpeed.Dequeue();
-            }
-            else if (IncommingFastSpeed.Count > 0) {
-                packet = IncommingFastSpeed.Dequeue();
-            }
-            else if (IncommingNormalSpeed.Count > 0) {
-                packet = IncommingNormalSpeed.Dequeue();
-            }
-
-            if (ReferenceEquals(null, packet)) {
-                WaitHandle.WaitOne();
-            }
-            else {
-                switch (packet.Type) {
-                    case PacketType.NeedChunkPoses:
-                        HandleNeedChunkPoses(packet);
-                        break;
-                    case PacketType.GenMap:
-                        HandleGenMap(packet);
-
-                        break;
-                    case PacketType.GenMesh:
-                        HandleGenMesh(packet);
+            try {
 
 
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                LocalPacket packet = null;
+                if (IncommingFasterSpeed.Count > 0) {
+                    packet = IncommingFasterSpeed.Dequeue();
                 }
+                else if (IncommingFastSpeed.Count > 0) {
+                    packet = IncommingFastSpeed.Dequeue();
+                }
+                else if (IncommingNormalSpeed.Count > 0) {
+                    packet = IncommingNormalSpeed.Dequeue();
+                }
+
+                if (ReferenceEquals(null, packet)) {
+                    WaitHandle.WaitOne();
+                }
+                else {
+                    switch (packet.Type) {
+                        case PacketType.NeedChunkPoses:
+                            DoingAtm = WorkingType.FindNewChunkPoses;
+                            HandleNeedChunkPoses(packet);
+                            break;
+                        case PacketType.GenMap:
+                            DoingAtm = WorkingType.GenMap;
+                            HandleGenMap(packet);
+                            break;
+                        case PacketType.GenMesh:
+                            DoingAtm = WorkingType.GenMesh;
+                            HandleGenMesh(packet);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+                DoingAtm = WorkingType.Idle;
+
             }
-
-
+            catch (Exception e) {
+                Debug.Log("Worker laver fejl: " + e);
+                throw;
+            }
         }
 
 
@@ -160,10 +174,10 @@ public class Worker {
         byte[, ,] map = new byte[Constants.ChunkWidth, Constants.ChunkHeight, Constants.ChunkWidth];
 
         for (int x = 0; x < Constants.ChunkWidth; x++) {
-            for (int y = 0; y < Constants.ChunkHeight ; y++) {
+            for (int y = 0; y < Constants.ChunkHeight; y++) {
                 for (int z = 0; z < Constants.ChunkWidth; z++) {
 
-                    if (Noise.Generate((x+packet.ChunkRef.Pos.x) / 50f, y / 50f, (z+packet.ChunkRef.Pos.y) / 50f) > 0) {
+                    if (Noise.Generate((x + packet.ChunkRef.Pos.x) / 50f, y / 50f, (z + packet.ChunkRef.Pos.y) / 50f) > 0) {
                         map[x, y, z] = 1;
                     }
 
@@ -174,6 +188,12 @@ public class Worker {
             }
         }
 
+        for (int x = 0; x < Constants.ChunkWidth; x++) {
+            for (int z = 0; z < Constants.ChunkWidth; z++) {
+                map[x, 0, z] = 1;
+                map[x, Constants.ChunkHeight - 1, z] = 1;
+            }
+        }
         //map[8, 8, 8] = 1;
 
         packet.Map = map;
@@ -184,10 +204,10 @@ public class Worker {
     private void HandleNeedChunkPoses(LocalPacket packet) {
         int playerChunkPosX = TerrainGen.LastPlayerChunkCoordPos.x;
         int playerChunkPosZ = TerrainGen.LastPlayerChunkCoordPos.y;
-        int minX = (playerChunkPosX - Constants.ViewRadiusChunk) * Constants.ChunkWidth;
-        int maxX = (playerChunkPosX + Constants.ViewRadiusChunk) * Constants.ChunkWidth;
-        int minZ = (playerChunkPosZ - Constants.ViewRadiusChunk) * Constants.ChunkWidth;
-        int maxZ = (playerChunkPosZ + Constants.ViewRadiusChunk) * Constants.ChunkWidth;
+        int minX = (playerChunkPosX - Constants.ViewRadiusChunk - 2) * Constants.ChunkWidth;
+        int maxX = (playerChunkPosX + Constants.ViewRadiusChunk + 2) * Constants.ChunkWidth;
+        int minZ = (playerChunkPosZ - Constants.ViewRadiusChunk - 2) * Constants.ChunkWidth;
+        int maxZ = (playerChunkPosZ + Constants.ViewRadiusChunk + 2) * Constants.ChunkWidth;
 
         List<Chunk> chunksToDestroy = new List<Chunk>();
 
