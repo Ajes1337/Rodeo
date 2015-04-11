@@ -63,8 +63,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 192772}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.58000803, y: 102.290001, z: -24.6100006}
-  m_LocalScale: {x: .278465569, y: .323626012, z: 1}
+  m_LocalPosition: {x: 0, y: 120, z: -105}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 480814}
   - {fileID: 492400}
@@ -89,7 +89,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 190852}
   m_LocalRotation: {x: .121150017, y: 0, z: 0, w: .992634237}
-  m_LocalPosition: {x: 0, y: 5, z: -2.71000004}
+  m_LocalPosition: {x: 0, y: 5, z: -6.13000011}
   m_LocalScale: {x: 3.59110832, y: 3.08998656, z: 1}
   m_Children: []
   m_Father: {fileID: 461076}
@@ -136,7 +136,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 352acd25df8bff74aa653ef77b6696e2, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 1
@@ -156,7 +156,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 192772}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!54 &5454476
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -209,7 +209,7 @@ Light:
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: .5
-  m_Range: 40
+  m_Range: 30
   m_SpotAngle: 45
   m_CookieSize: 10
   m_Shadows:
@@ -242,6 +242,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MissileFab: {fileID: 11471564, guid: 12c283d5670536a469ba4adf699e765a, type: 2}
+  Health: 1000
 --- !u!114 &11441360
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -254,7 +255,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _creaturePrefab: {fileID: 11415906, guid: 8d84df04467841041aa724b6776876c9, type: 2}
-  _creatures: []
+  Creatures: []
 --- !u!124 &12441502
 Behaviour:
   m_ObjectHideFlags: 1

@@ -122,6 +122,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3ac8f30823d8cf4887f7c77dda0120e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Health: 100
   _lineMaterial: {fileID: 2100000, guid: 137a6d57c88a7a0468c2ebd2c3e921e7, type: 2}
   Explosions:
   - {fileID: 100000, guid: 285c3b6e7a8958143ad137971689a216, type: 2}
