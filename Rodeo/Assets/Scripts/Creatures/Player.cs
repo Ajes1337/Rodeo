@@ -22,6 +22,7 @@ public class Player : MonoBehaviour
     private int selectedWeapon = 0;
     private Light dalight;
     private int _score;
+    private float _startTime;
 
     public void IncreseScore()
     {
@@ -38,7 +39,7 @@ public class Player : MonoBehaviour
     {
         GUI.HorizontalSlider(new Rect(Screen.width - 420, Screen.height - 20, 400, 20), Health, 0, 1000);
 
-        TerrainGen.AjesGuiLabel(new Rect(Screen.width - 420, Screen.height - 80, 200, 20), "Time Surviced:\t" + Time.time);
+        TerrainGen.AjesGuiLabel(new Rect(Screen.width - 420, Screen.height - 80, 200, 20), "Time Surviced:\t" + (Time.time - _startTime));
         TerrainGen.AjesGuiLabel(new Rect(Screen.width - 420, Screen.height - 60, 200, 20), "Kills:\t\t" + _score);
         TerrainGen.AjesGuiLabel(new Rect(Screen.width - 420, Screen.height - 40, 200, 20), "Health:\t\t" + Health);
         TerrainGen.AjesGuiLabel(new Rect(0, Screen.height - 160, 200, 20), "Weapons:");
@@ -54,10 +55,13 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        _startTime = Time.time;
         this._rigidbody = this.GetComponent<Rigidbody>();
         dalight = GetComponentInChildren<Light>();
 
         Instance = this;
+
+        
 
         //DynamicMesh mesh = new DynamicMesh(this.GetComponent<MeshCollider>(), this.GetComponent<MeshFilter>());
         //MeshUtilities.GenerateCreature(mesh, 2);
