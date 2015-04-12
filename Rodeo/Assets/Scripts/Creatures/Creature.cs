@@ -148,6 +148,8 @@ public class Creature : MonoBehaviour
         if (Health < 0)
         {
             GameObject.Destroy(this.gameObject);
+            CreatureSpawner.Instance.Creatures.Remove(this);
+            Player.Instance.IncreseScore();
         }
     }
 

@@ -12,8 +12,8 @@ public class Player : MonoBehaviour
     private float _forceZ = 1500;
     private float _forceY = 1000;
     private float _forceX = 1000;
-    private float _rotationYSpeed = 1;
-    private float _rotationXSpeed = 1;
+    private float _rotationYSpeed = 0.31f;
+    private float _rotationXSpeed = 0.31f;
     private float _tiltSpeed = 30;
     private float _maxTiltZ = 60;
     public Missile MissileFab;
@@ -21,6 +21,13 @@ public class Player : MonoBehaviour
     public float Health = 1000;
     private int selectedWeapon = 0;
     private Light dalight;
+    private int _score;
+
+    public void IncreseScore()
+    {
+        _score++;
+        Health = Mathf.Min(Health + 200, 1000);
+    }
 
     private void Awake()
     {
@@ -31,7 +38,9 @@ public class Player : MonoBehaviour
     {
         GUI.HorizontalSlider(new Rect(Screen.width - 420, Screen.height - 20, 400, 20), Health, 0, 1000);
 
-        TerrainGen.AjesGuiLabel(new Rect(Screen.width - 420, Screen.height - 40, 200, 20), "Health:");
+        TerrainGen.AjesGuiLabel(new Rect(Screen.width - 420, Screen.height - 80, 200, 20), "Time Surviced:\t" + Time.time);
+        TerrainGen.AjesGuiLabel(new Rect(Screen.width - 420, Screen.height - 60, 200, 20), "Kills:\t\t" + _score);
+        TerrainGen.AjesGuiLabel(new Rect(Screen.width - 420, Screen.height - 40, 200, 20), "Health:\t\t" + Health);
         TerrainGen.AjesGuiLabel(new Rect(0, Screen.height - 160, 200, 20), "Weapons:");
         TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 140, 200, 20), "Hole");
         TerrainGen.AjesGuiLabel(new Rect(20, Screen.height - 120, 200, 22), "LightningRotateBall");
@@ -50,9 +59,9 @@ public class Player : MonoBehaviour
 
         Instance = this;
 
-        DynamicMesh mesh = new DynamicMesh(this.GetComponent<MeshCollider>(), this.GetComponent<MeshFilter>());
-        MeshUtilities.GenerateCreature(mesh, 2);
-        mesh.PushChanges(true, true);
+        //DynamicMesh mesh = new DynamicMesh(this.GetComponent<MeshCollider>(), this.GetComponent<MeshFilter>());
+        //MeshUtilities.GenerateCreature(mesh, 2);
+        //mesh.PushChanges(true, true);
     }
 
     private void Update()
@@ -85,7 +94,6 @@ public class Player : MonoBehaviour
             Cursor.visible = true;
         }
 
-     
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             selectedWeapon = 0;
@@ -117,7 +125,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.RightControl) || Input.GetKeyDown(KeyCode.LeftControl))
         {
-            Missile mis = (Missile)Instantiate(MissileFab, transform.position + transform.forward , Quaternion.LookRotation(transform.forward));
+            Missile mis = (Missile)Instantiate(MissileFab, transform.position + transform.forward, Quaternion.LookRotation(transform.forward));
             mis.SetMissileType(selectedWeapon);
         }
 
@@ -163,11 +171,11 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.UpArrow))
         {
-            this._rigidbody.AddTorque(this.transform.right * _rotationYSpeed, ForceMode.Force);
+            this._rigidbody.AddTorque(this.transform.right * _rotationYSpeed * 0.4f, ForceMode.Force);
         }
         if (Input.GetKey(KeyCode.DownArrow))
         {
-            this._rigidbody.AddTorque(this.transform.right * _rotationYSpeed * -1, ForceMode.Force);
+            this._rigidbody.AddTorque(this.transform.right * _rotationYSpeed * 0.4f * -1, ForceMode.Force);
         }
         if (Input.GetKey(KeyCode.Q))
         {
