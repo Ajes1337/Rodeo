@@ -26,6 +26,10 @@ public class TerrainGen : MonoBehaviour {
 
     private void Start() {
 
+        OnApplicationQuit();
+        Workers.Clear();
+        WorkerThreads.Clear();
+
         Chunk.Chunks.Clear();
 
         Constants.WorkerAmount = Environment.ProcessorCount - 2;
